@@ -16,6 +16,10 @@ class AppColors {
 
   // Borders
   static const Color border = Color(0x1F1D192B);
-  
+  static const Color inputBorder = Color(0xFF1D192B);
+
   static const Color lightBlue = Color(0xFFDFE7F7);
+
+  // Button
+  static const Color disabledButton = Color(0xFF9E9E9E);
 }
