@@ -18,7 +18,7 @@ dependencies:
 
   # Networking
   dio: ^5.8.0+1
-  retrofit: ^4.4.2
+  retrofit: ^4.9.0
 
   # Dependency Injection
   get_it: ^8.0.3
@@ -28,7 +28,7 @@ dependencies:
   go_router: ^15.1.2
 
   # Local Storage
-  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
 
   # Utilities
   url_launcher: ^6.3.1
@@ -40,7 +40,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.4.15
   injectable_generator: ^2.7.0
-  retrofit_generator: ^9.1.9
+  retrofit_generator: ^10.2.7
 
 flutter:
   uses-material-design: true

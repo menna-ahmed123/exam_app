@@ -32,6 +32,7 @@ class AppStrings {
   static const String passwordNotMatched = 'Password not matched';
 
   // ===== Forget password =====
+  static const String passwordFlowHeader = 'Password';
   static const String forgetPasswordTitle = 'Forget password';
   static const String forgetPasswordSubtitle =
       'Please enter your email associated to your account';
