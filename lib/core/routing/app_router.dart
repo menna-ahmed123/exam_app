@@ -1,6 +1,7 @@
-import 'package:exam_app/core/constants/ui_strings.dart';
+import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/routing/route_placeholder.dart';
+import 'package:exam_app/feature/auth/presentation/views/login_view.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -13,9 +14,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const RoutePlaceholder(
-          title: AppStrings.login,
-        ),
+        builder: (context, state) => const LoginView(),
       ),
       GoRoute(
         path: AppRoutes.signUp,

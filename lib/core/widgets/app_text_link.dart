@@ -21,9 +21,9 @@ class AppTextLink extends StatelessWidget {
       child: Text(
         text,
         style: AppTextStyles.styleRegular14().copyWith(
-          color: AppColors.primaryBlue,
+          color: AppColors.primaryText,
           decoration: underline ? TextDecoration.underline : null,
-          decorationColor: AppColors.primaryBlue,
+          decorationColor: AppColors.primaryText,
         ),
       ),
     );
