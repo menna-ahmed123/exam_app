@@ -2,6 +2,7 @@ import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/routing/route_placeholder.dart';
 import 'package:exam_app/feature/auth/presentation/views/login_view.dart';
+import 'package:exam_app/feature/auth/presentation/views/sign_up_view.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -19,9 +20,7 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.signUp,
         name: 'signUp',
-        builder: (context, state) => const RoutePlaceholder(
-          title: AppStrings.signUpTitle,
-        ),
+        builder: (context, state) => const SignUpView()
       ),
       GoRoute(
         path: AppRoutes.forgetPassword,
