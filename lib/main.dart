@@ -1,11 +1,11 @@
-import 'package:exam_app/core/di/service_locator.dart';
+import 'package:exam_app/core/di/injection.dart';
 import 'package:exam_app/core/resources/app_theme.dart';
 import 'package:exam_app/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initDependencies();
+  configureDependencies();
   runApp(const MyApp());
 }
 

@@ -1,13 +1,13 @@
-import 'package:exam_app/core/di/service_locator.dart';
+import 'package:exam_app/core/di/injection.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
-import 'package:exam_app/feature/auth/presentation/views/login_view.dart';
-import 'package:exam_app/feature/auth/presentation/views/sign_up_view.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/forget_password/cubit/forget_password_cubit.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/forget_password/pages/forget_password_page.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/reset_password/cubit/reset_password_cubit.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/reset_password/pages/reset_password_page.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/verify_code/cubit/verify_reset_code_cubit.dart';
-import 'package:exam_app/features/auth/forget_password/presentation/verify_code/pages/verify_reset_code_page.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view/forget_password_view.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view/reset_password_view.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view/verify_reset_code_view.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view_model/forget_password_cubit.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view_model/reset_password_cubit.dart';
+import 'package:exam_app/features/auth/forget_password/presentation/view_model/verify_reset_code_cubit.dart';
+import 'package:exam_app/features/auth/login/presentation/view/login_view.dart';
+import 'package:exam_app/features/auth/sign_up/presentation/view/sign_up_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,8 +32,8 @@ class AppRouter {
         path: AppRoutes.forgetPassword,
         name: 'forgetPassword',
         builder: (context, state) => BlocProvider(
-          create: (_) => sl<ForgetPasswordCubit>(),
-          child: const ForgetPasswordPage(),
+          create: (_) => getIt<ForgetPasswordCubit>(),
+          child: const ForgetPasswordView(),
         ),
       ),
       GoRoute(
@@ -42,8 +42,8 @@ class AppRouter {
         builder: (context, state) {
           final email = state.extra as String? ?? '';
           return BlocProvider(
-            create: (_) => sl<VerifyResetCodeCubit>()..init(email),
-            child: VerifyResetCodePage(email: email),
+            create: (_) => getIt<VerifyResetCodeCubit>()..init(email),
+            child: VerifyResetCodeView(email: email),
           );
         },
       ),
@@ -53,8 +53,8 @@ class AppRouter {
         builder: (context, state) {
           final email = state.extra as String? ?? '';
           return BlocProvider(
-            create: (_) => sl<ResetPasswordCubit>()..init(email),
-            child: ResetPasswordPage(email: email),
+            create: (_) => getIt<ResetPasswordCubit>()..init(email),
+            child: ResetPasswordView(email: email),
           );
         },
       ),

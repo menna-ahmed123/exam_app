@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class SecureStorageService {
   Future<String?> read({required String key});
@@ -10,6 +11,7 @@ abstract class SecureStorageService {
   Future<void> deleteAll();
 }
 
+@LazySingleton(as: SecureStorageService)
 class SecureStorageServiceImpl implements SecureStorageService {
   SecureStorageServiceImpl(this._storage);
 
