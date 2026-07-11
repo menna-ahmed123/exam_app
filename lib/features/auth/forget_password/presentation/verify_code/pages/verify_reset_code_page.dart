@@ -1,5 +1,5 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
-import 'package:exam_app/core/constants/ui_strings.dart';
+import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_screen_header.dart';

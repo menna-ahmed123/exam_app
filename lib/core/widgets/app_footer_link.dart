@@ -29,7 +29,9 @@ class AppFooterLink extends StatelessWidget {
         const SizedBox(width: 4),
         AppTextLink(
           text: linkText,
+          
           onPressed: onLinkPressed,
+          
         ),
       ],
     );

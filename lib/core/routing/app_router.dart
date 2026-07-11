@@ -1,7 +1,7 @@
-import 'package:exam_app/core/constants/ui_strings.dart';
 import 'package:exam_app/core/di/service_locator.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
-import 'package:exam_app/core/routing/route_placeholder.dart';
+import 'package:exam_app/feature/auth/presentation/views/login_view.dart';
+import 'package:exam_app/feature/auth/presentation/views/sign_up_view.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/forget_password/cubit/forget_password_cubit.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/forget_password/pages/forget_password_page.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/reset_password/cubit/reset_password_cubit.dart';
@@ -21,16 +21,12 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const RoutePlaceholder(
-          title: AppStrings.login,
-        ),
+        builder: (context, state) => const LoginView(),
       ),
       GoRoute(
         path: AppRoutes.signUp,
         name: 'signUp',
-        builder: (context, state) => const RoutePlaceholder(
-          title: AppStrings.signUpTitle,
-        ),
+        builder: (context, state) => const SignUpView(),
       ),
       GoRoute(
         path: AppRoutes.forgetPassword,

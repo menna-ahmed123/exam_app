@@ -8,11 +8,13 @@ class AppTextLink extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.underline = true,
+    this.color,
   });
 
   final String text;
   final VoidCallback? onPressed;
   final bool underline;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +23,9 @@ class AppTextLink extends StatelessWidget {
       child: Text(
         text,
         style: AppTextStyles.styleRegular14().copyWith(
-          color: AppColors.primaryBlue,
+          color: color ?? AppColors.primaryBlue,
           decoration: underline ? TextDecoration.underline : null,
-          decorationColor: AppColors.primaryBlue,
+          decorationColor: color ?? AppColors.primaryBlue,
         ),
       ),
     );
