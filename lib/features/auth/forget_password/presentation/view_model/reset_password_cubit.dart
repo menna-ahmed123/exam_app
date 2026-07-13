@@ -1,3 +1,4 @@
+import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/features/auth/forget_password/domain/usecases/reset_password.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/view_model/reset_password_state.dart';
@@ -69,16 +70,16 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       newPassword: state.newPassword,
     );
 
-    if (result.failure != null) {
-      emit(
-        state.copyWith(
-          status: ResetPasswordStatus.failure,
-          errorMessage: result.failure!.message,
-        ),
-      );
-      return;
+    switch (result) {
+      case SuccessResponse():
+        emit(state.copyWith(status: ResetPasswordStatus.success));
+      case ErrorResponse(:final errMessage):
+        emit(
+          state.copyWith(
+            status: ResetPasswordStatus.failure,
+            errorMessage: errMessage,
+          ),
+        );
     }
-
-    emit(state.copyWith(status: ResetPasswordStatus.success));
   }
 }

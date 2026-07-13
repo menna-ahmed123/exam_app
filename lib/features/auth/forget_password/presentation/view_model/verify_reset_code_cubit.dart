@@ -1,3 +1,4 @@
+import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/features/auth/forget_password/domain/usecases/forgot_password.dart';
 import 'package:exam_app/features/auth/forget_password/domain/usecases/verify_reset_code.dart';
@@ -52,17 +53,17 @@ class VerifyResetCodeCubit extends Cubit<VerifyResetCodeState> {
 
     final result = await _verifyResetCodeUseCase(state.code);
 
-    if (result.failure != null) {
-      emit(
-        state.copyWith(
-          status: VerifyResetCodeStatus.failure,
-          codeError: result.failure!.message,
-        ),
-      );
-      return;
+    switch (result) {
+      case SuccessResponse():
+        emit(state.copyWith(status: VerifyResetCodeStatus.success));
+      case ErrorResponse(:final errMessage):
+        emit(
+          state.copyWith(
+            status: VerifyResetCodeStatus.failure,
+            codeError: errMessage,
+          ),
+        );
     }
-
-    emit(state.copyWith(status: VerifyResetCodeStatus.success));
   }
 
   Future<void> resendCode() async {
@@ -78,22 +79,22 @@ class VerifyResetCodeCubit extends Cubit<VerifyResetCodeState> {
 
     final result = await _forgotPasswordUseCase(state.email);
 
-    if (result.failure != null) {
-      emit(
-        state.copyWith(
-          status: VerifyResetCodeStatus.failure,
-          errorMessage: result.failure!.message,
-        ),
-      );
-      return;
+    switch (result) {
+      case SuccessResponse():
+        emit(
+          state.copyWith(
+            status: VerifyResetCodeStatus.initial,
+            code: '',
+            resetToken: state.resetToken + 1,
+          ),
+        );
+      case ErrorResponse(:final errMessage):
+        emit(
+          state.copyWith(
+            status: VerifyResetCodeStatus.failure,
+            errorMessage: errMessage,
+          ),
+        );
     }
-
-    emit(
-      state.copyWith(
-        status: VerifyResetCodeStatus.initial,
-        code: '',
-        resetToken: state.resetToken + 1,
-      ),
-    );
   }
 }

@@ -6,8 +6,7 @@ import 'package:exam_app/features/auth/forget_password/presentation/view/verify_
 import 'package:exam_app/features/auth/forget_password/presentation/view_model/forget_password_cubit.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/view_model/reset_password_cubit.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/view_model/verify_reset_code_cubit.dart';
-import 'package:exam_app/features/auth/login/presentation/view/login_view.dart';
-import 'package:exam_app/features/auth/sign_up/presentation/view/sign_up_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,12 +20,12 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const LoginView(),
+        builder: (context, state) => Placeholder(),
       ),
       GoRoute(
         path: AppRoutes.signUp,
         name: 'signUp',
-        builder: (context, state) => const SignUpView(),
+        builder: (context, state) => Placeholder(),
       ),
       GoRoute(
         path: AppRoutes.forgetPassword,

@@ -17,14 +17,6 @@ class SecureStorageServiceImpl implements SecureStorageService {
 
   final FlutterSecureStorage _storage;
 
-  static const AndroidOptions _androidOptions = AndroidOptions(
-    encryptedSharedPreferences: true,
-  );
-
-  static FlutterSecureStorage create() {
-    return const FlutterSecureStorage(aOptions: _androidOptions);
-  }
-
   @override
   Future<String?> read({required String key}) {
     return _storage.read(key: key);

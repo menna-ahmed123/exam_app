@@ -1,3 +1,4 @@
+import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/features/auth/forget_password/domain/usecases/forgot_password.dart';
 import 'package:exam_app/features/auth/forget_password/presentation/view_model/forget_password_state.dart';
@@ -44,16 +45,16 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
 
     final result = await _forgotPasswordUseCase(state.email.trim());
 
-    if (result.failure != null) {
-      emit(
-        state.copyWith(
-          status: ForgetPasswordStatus.failure,
-          errorMessage: result.failure!.message,
-        ),
-      );
-      return;
+    switch (result) {
+      case SuccessResponse():
+        emit(state.copyWith(status: ForgetPasswordStatus.success));
+      case ErrorResponse(:final errMessage):
+        emit(
+          state.copyWith(
+            status: ForgetPasswordStatus.failure,
+            errorMessage: errMessage,
+          ),
+        );
     }
-
-    emit(state.copyWith(status: ForgetPasswordStatus.success));
   }
 }

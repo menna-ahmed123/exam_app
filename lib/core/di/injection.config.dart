@@ -10,16 +10,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
-import 'package:exam_app/core/di/register_module.dart' as _i292;
+import 'package:exam_app/core/di/app_module.dart' as _i917;
 import 'package:exam_app/core/storage/secure_storage_service.dart' as _i1037;
 import 'package:exam_app/features/auth/forget_password/api/client/forget_password_api_client.dart'
     as _i536;
 import 'package:exam_app/features/auth/forget_password/api/datasource/remote/forget_password_api_datasource.dart'
     as _i368;
-import 'package:exam_app/features/auth/forget_password/data/datasource/remote/forget_password_remote_datasource.dart'
-    as _i427;
-import 'package:exam_app/features/auth/forget_password/data/datasource/remote/forget_password_remote_datasource_impl.dart'
-    as _i896;
 import 'package:exam_app/features/auth/forget_password/data/repo/forget_password_repo_impl.dart'
     as _i932;
 import 'package:exam_app/features/auth/forget_password/domain/repo/forget_password_repo.dart'
@@ -47,13 +43,13 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    final registerModule = _$RegisterModule();
-    gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
+    final appModule = _$AppModule();
+    gh.lazySingleton<_i361.Dio>(() => appModule.dio());
     gh.lazySingleton<_i558.FlutterSecureStorage>(
-      () => registerModule.secureStorage,
+      () => appModule.secureStorage(),
     );
     gh.lazySingleton<_i536.ForgetPasswordApiClient>(
-      () => registerModule.forgetPasswordApiClient(gh<_i361.Dio>()),
+      () => appModule.forgetPasswordApiClient(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i1037.SecureStorageService>(
       () => _i1037.SecureStorageServiceImpl(gh<_i558.FlutterSecureStorage>()),
@@ -63,15 +59,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i536.ForgetPasswordApiClient>(),
       ),
     );
-    gh.lazySingleton<_i427.ForgetPasswordRemoteDatasource>(
-      () => _i896.ForgetPasswordRemoteDatasourceImpl(
-        gh<_i368.ForgetPasswordApiDatasource>(),
-      ),
-    );
     gh.lazySingleton<_i991.ForgetPasswordRepo>(
-      () => _i932.ForgetPasswordRepoImpl(
-        gh<_i427.ForgetPasswordRemoteDatasource>(),
-      ),
+      () =>
+          _i932.ForgetPasswordRepoImpl(gh<_i368.ForgetPasswordApiDatasource>()),
     );
     gh.lazySingleton<_i410.ForgotPasswordUseCase>(
       () => _i410.ForgotPasswordUseCase(gh<_i991.ForgetPasswordRepo>()),
@@ -98,4 +88,4 @@ extension GetItInjectableX on _i174.GetIt {
   }
 }
 
-class _$RegisterModule extends _i292.RegisterModule {}
+class _$AppModule extends _i917.AppModule {}

@@ -1,50 +1,39 @@
-import 'package:exam_app/core/error/exceptions.dart';
-import 'package:exam_app/core/error/failures.dart';
-import 'package:exam_app/features/auth/forget_password/data/datasource/remote/forget_password_remote_datasource.dart';
+import 'package:exam_app/config/base_response/base_response.dart';
+import 'package:exam_app/features/auth/forget_password/api/datasource/remote/forget_password_api_datasource.dart';
+import 'package:exam_app/features/auth/forget_password/data/models/message_response.dart';
 import 'package:exam_app/features/auth/forget_password/domain/repo/forget_password_repo.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ForgetPasswordRepo)
 class ForgetPasswordRepoImpl implements ForgetPasswordRepo {
-  ForgetPasswordRepoImpl(this._remoteDatasource);
+  ForgetPasswordRepoImpl(this._apiDatasource);
 
-  final ForgetPasswordRemoteDatasource _remoteDatasource;
+  final ForgetPasswordApiDatasource _apiDatasource;
 
   @override
-  Future<({Failure? failure})> forgotPassword(String email) {
-    return _execute(() => _remoteDatasource.forgotPassword(email));
+  Future<BaseResponse<MessageResponse>> forgotPassword(String email) {
+    return BaseResponse.execute(
+      () => _apiDatasource.forgotPassword(email),
+    );
   }
 
   @override
-  Future<({Failure? failure})> verifyResetCode(String resetCode) {
-    return _execute(() => _remoteDatasource.verifyResetCode(resetCode));
+  Future<BaseResponse<MessageResponse>> verifyResetCode(String resetCode) {
+    return BaseResponse.execute(
+      () => _apiDatasource.verifyResetCode(resetCode),
+    );
   }
 
   @override
-  Future<({Failure? failure})> resetPassword({
+  Future<BaseResponse<MessageResponse>> resetPassword({
     required String email,
     required String newPassword,
   }) {
-    return _execute(
-      () => _remoteDatasource.resetPassword(
+    return BaseResponse.execute(
+      () => _apiDatasource.resetPassword(
         email: email,
         newPassword: newPassword,
       ),
     );
-  }
-
-  Future<({Failure? failure})> _execute(Future<void> Function() action) async {
-    try {
-      await action();
-      return (failure: null);
-    } on NetworkException catch (error) {
-      return (failure: NetworkFailure(error.message));
-    } on ServerException catch (error) {
-      return (failure: ServerFailure(error.message));
-    } catch (_) {
-      return (
-        failure: const ServerFailure('Something went wrong. Please try again.'),
-      );
-    }
   }
 }
