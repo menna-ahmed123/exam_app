@@ -12,18 +12,17 @@
 import 'package:dio/dio.dart' as _i361;
 import 'package:exam_app/config/app_module/app_module.dart' as _i316;
 import 'package:exam_app/core/storage/secure_storage_service.dart' as _i1037;
-import 'package:exam_app/feature/auth/api/client/auth_api_client.dart'
-    as _i565;
+import 'package:exam_app/feature/auth/api/client/auth_api_client.dart' as _i355;
 import 'package:exam_app/feature/auth/api/data_source/auth_remote_data_source_impl.dart'
-    as _i954;
+    as _i939;
 import 'package:exam_app/feature/auth/data/data_sources/remote/auth_remote_data_source.dart'
-    as _i164;
-import 'package:exam_app/feature/auth/data/repos/auth_repo_impl.dart' as _i655;
-import 'package:exam_app/feature/auth/domain/repos/auth_repo.dart' as _i256;
+    as _i516;
+import 'package:exam_app/feature/auth/data/repos/auth_repo_impl.dart' as _i623;
+import 'package:exam_app/feature/auth/domain/repos/auth_repo.dart' as _i820;
 import 'package:exam_app/feature/auth/domain/use_cases/login_use_case.dart'
     as _i966;
-import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart'
-    as _i542;
+import 'package:exam_app/feature/auth/domain/use_cases/sign_up_use_case.dart'
+    as _i287;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -40,30 +39,31 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => appModule.secureStorage(),
     );
-    gh.singleton<_i565.AuthApiClient>(
-      () => _i565.AuthApiClient(gh<_i361.Dio>()),
+    gh.singleton<_i355.AuthApiClient>(
+      () => _i355.AuthApiClient(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i1037.SecureStorageService>(
       () => _i1037.SecureStorageServiceImpl(gh<_i558.FlutterSecureStorage>()),
     );
-    gh.lazySingleton<_i164.AuthRemoteDataSource>(
-      () => _i954.AuthRemoteDataSourceImpl(
-        authApiClient: gh<_i565.AuthApiClient>(),
+    gh.lazySingleton<_i516.AuthRemoteDataSource>(
+      () => _i939.AuthRemoteDataSourceImpl(
+        authApiClient: gh<_i355.AuthApiClient>(),
       ),
     );
-    gh.lazySingleton<_i256.AuthRepo>(
-      () => _i655.AuthRepoImpl(
-        authRemoteDataSource: gh<_i164.AuthRemoteDataSource>(),
+    gh.lazySingleton<_i820.AuthRepo>(
+      () => _i623.AuthRepoImpl(
+        authRemoteDataSource: gh<_i516.AuthRemoteDataSource>(),
         secureStorageService: gh<_i1037.SecureStorageService>(),
       ),
     );
+  
     gh.lazySingleton<_i966.LoginUseCase>(
-      () => _i966.LoginUseCase(gh<_i256.AuthRepo>()),
+      () => _i966.LoginUseCase(gh<_i820.AuthRepo>()),
     );
-    
-    gh.factory<_i542.LoginViewModel>(
-      () => _i542.LoginViewModel(gh<_i966.LoginUseCase>()),
+    gh.lazySingleton<_i287.SignUpUseCase>(
+      () => _i287.SignUpUseCase(gh<_i820.AuthRepo>()),
     );
+   
     return this;
   }
 }

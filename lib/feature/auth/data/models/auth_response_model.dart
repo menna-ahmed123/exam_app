@@ -2,10 +2,10 @@ import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'user_model.dart';
 
-part 'login_response_model.g.dart';
+part 'auth_response_model.g.dart';
 
 @JsonSerializable()
-class LoginResponseModel {
+class AuthResponseModel {
   @JsonKey(name: 'message')
   final String message;
 
@@ -15,19 +15,19 @@ class LoginResponseModel {
   @JsonKey(name: 'user')
   final UserModel user;
 
-  LoginResponseModel({
+  AuthResponseModel({
     required this.message,
     required this.token,
     required this.user,
   });
 
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$LoginResponseModelFromJson(json);
+  factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LoginResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$AuthResponseModelToJson(this);
 
-  LoginResponseEntity toDomain() {
-    return LoginResponseEntity(
+  ResponseEntity toDomain() {
+    return ResponseEntity(
       message: message,
       token: token,
       user: user.toDomain(),

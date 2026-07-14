@@ -5,19 +5,17 @@ import 'package:exam_app/feature/auth/domain/repos/auth_repo.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton()
-class LoginUseCase {
-  LoginUseCase(this.loginRepo);
+class SignUpUseCase {
+  SignUpUseCase(this.signUpRepo);
 
-  final AuthRepo loginRepo;
+  final AuthRepo signUpRepo;
 
   Future<BaseResponse<ResponseEntity>> call({
-    required String email,
-    required String password,
+  required SignUpEntity signUpEntity
   }) async {
-    final BaseResponse<ResponseEntity> loginResponseEntity = await loginRepo
-        .login(email: email, password: password);
+    final BaseResponse<ResponseEntity> signUpResponseEntity = await signUpRepo
+        .signUp(signUpEntity: signUpEntity);
 
-    return loginResponseEntity;
+    return signUpResponseEntity;
   }
- 
 }
