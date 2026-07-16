@@ -5,10 +5,13 @@ class Validators {
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
 
-  static final RegExp _passwordRegex = RegExp(
+  /*static final RegExp _passwordRegex = RegExp(
     r'^(?=.*[A-Z])(?=.*\d).{6,}$',
   );
+  */
 
+ static final RegExp _upperCaseRegex = RegExp(r'[A-Z]');
+  static final RegExp _numberRegex = RegExp(r'\d');
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
@@ -29,16 +32,25 @@ class Validators {
     return null;
   }
 
-  static String? password(String? value) {
+static String? password(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
-    if (!_passwordRegex.hasMatch(value)) {
-      return 'Password must contain 6 characters with upper case letter and one number at least';
+
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
     }
+
+    if (!_upperCaseRegex.hasMatch(value)) {
+      return 'Password must contain an uppercase letter';
+    }
+
+    if (!_numberRegex.hasMatch(value)) {
+      return 'Password must contain at least one number';
+    }
+
     return null;
   }
-
   static String? confirmPassword(String? value, String password) {
     if (value == null || value.trim().isEmpty) {
       return 'Confirm password is required';

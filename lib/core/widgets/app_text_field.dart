@@ -59,9 +59,12 @@ class AppTextField extends StatelessWidget {
           autofillHints: autofillHints,
           style: AppTextStyles.styleRegular16(color: AppColors.primaryText),
           decoration: InputDecoration(
+
             labelText: label,
             hintText: hint,
             errorText: hasError ? errorText : null,
+              errorMaxLines: 2,
+             
             labelStyle: AppTextStyles.styleRegular13(color: labelColor),
             hintStyle: AppTextStyles.styleRegular16(color: AppColors.hintText),
             floatingLabelStyle: AppTextStyles.styleRegular13(color: labelColor),

@@ -28,10 +28,8 @@ class AuthRepoImpl implements AuthRepo {
       case SuccessResponse<AuthResponseModel>():
         final ResponseEntity loginResponseEntity = loginResponseModel.data
             .toDomain();
-        await secureStorageService.write(
-          key: StorageKeys.accessToken,
-          value: loginResponseEntity.token,
-        );
+                   await writeToken(loginResponseEntity);
+
 
         return SuccessResponse<ResponseEntity>(loginResponseEntity);
 
@@ -53,15 +51,19 @@ class AuthRepoImpl implements AuthRepo {
       case SuccessResponse<AuthResponseModel>():
         final ResponseEntity signUpResponseEntity = signUpResponseModel.data
             .toDomain();
-            await secureStorageService.write(
-          key: StorageKeys.accessToken,
-          value: signUpResponseEntity.token,
-        );
+            await writeToken(signUpResponseEntity);
         return SuccessResponse(signUpResponseEntity);
          case ErrorResponse<AuthResponseModel>():
         return ErrorResponse<ResponseEntity>(
           errMessage: signUpResponseModel.errMessage,
         );
     }
+  }
+
+  Future<void> writeToken(ResponseEntity signUpResponseEntity) async {
+     await secureStorageService.write(
+              key: StorageKeys.accessToken,
+              value: signUpResponseEntity.token,
+            );
   }
 }
