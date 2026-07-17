@@ -25,6 +25,8 @@ import 'package:exam_app/feature/auth/domain/use_cases/sign_up_use_case.dart'
     as _i287;
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart'
     as _i196;
+import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_view_model.dart'
+    as _i995;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -66,6 +68,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i196.LoginViewModel>(
       () => _i196.LoginViewModel(gh<_i966.LoginUseCase>()),
+    );
+    gh.factory<_i995.SignUpViewModel>(
+      () => _i995.SignUpViewModel(gh<_i287.SignUpUseCase>()),
     );
     return this;
   }

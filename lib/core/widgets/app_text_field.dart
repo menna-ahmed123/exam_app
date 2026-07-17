@@ -64,6 +64,7 @@ class AppTextField extends StatelessWidget {
             hintText: hint,
             errorText: hasError ? errorText : null,
               errorMaxLines: 2,
+              errorStyle: const TextStyle(fontSize: 12),
              
             labelStyle: AppTextStyles.styleRegular13(color: labelColor),
             hintStyle: AppTextStyles.styleRegular16(color: AppColors.hintText),

@@ -1,6 +1,7 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_colors.dart';
+import 'package:exam_app/core/routing/app_router.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/utils/validators.dart';
@@ -125,7 +126,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               SizedBox(height: AppSpacing.fieldGap),
 
               AppFooterLink(
-                onLinkPressed: () {},
+                onLinkPressed: () {
+                  context.push(AppRoutes.signUp);
+                },
                 prefixText: AppStrings.dontHaveAccount,
                 linkText: AppStrings.signUp,
               ),
