@@ -7,6 +7,19 @@ class Validators {
 
   static final RegExp _upperCaseRegex = RegExp(r'[A-Z]');
   static final RegExp _numberRegex = RegExp(r'\d');
+  static final RegExp _userNameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
+
+  static String? userName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Username is required';
+    }
+
+    if (!_userNameRegex.hasMatch(value.trim())) {
+      return 'Invalid username';
+    }
+
+    return null;
+  }
 
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {

@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/presentation/reset_password/widgets/reset_password_view_body.dart';
+import 'package:exam_app/feature/forget_password/presentation/reset_password/widgets/reset_password_view_body.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordView extends StatelessWidget {

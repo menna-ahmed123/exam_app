@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/domain/entities/verify_reset_code_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/verify_reset_code_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'verify_reset_code_request_model.g.dart';
