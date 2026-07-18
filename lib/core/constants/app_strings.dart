@@ -51,4 +51,6 @@ class AppStrings {
   static const String resetPasswordHint =
       'Password must not be empty and must contain 6 characters with upper case letter and one number at least';
   static const String newPassword = 'New password';
+  static const String passwordResetSuccess =
+      'Password reset successfully. Please login.';
 }

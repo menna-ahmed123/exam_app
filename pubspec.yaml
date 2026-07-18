@@ -34,6 +34,7 @@ dependencies:
   # Utilities
   url_launcher: ^6.3.1
   intl: ^0.20.2
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +44,7 @@ dev_dependencies:
   injectable_generator: ^2.7.0
   json_serializable: ^6.9.5
   retrofit_generator: ^10.2.7
+  freezed: ^3.2.5
 
 flutter:
   uses-material-design: true

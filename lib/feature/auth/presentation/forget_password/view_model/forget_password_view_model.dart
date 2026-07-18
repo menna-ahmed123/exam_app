@@ -1,0 +1,59 @@
+import 'package:exam_app/config/base_response/base_response.dart';
+import 'package:exam_app/feature/auth/domain/entities/forget_password_entity.dart';
+import 'package:exam_app/feature/auth/domain/entities/message_entity.dart';
+import 'package:exam_app/feature/auth/domain/use_cases/forget_password_use_case.dart';
+import 'package:exam_app/feature/auth/presentation/forget_password/view_model/forget_password_event.dart';
+import 'package:exam_app/feature/auth/presentation/forget_password/view_model/forget_password_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
+@injectable
+class ForgetPasswordViewModel extends Cubit<ForgetPasswordState> {
+  ForgetPasswordViewModel(this._forgetPasswordUseCase)
+      : super(ForgetPasswordState.initial());
+
+  final ForgetPasswordUseCase _forgetPasswordUseCase;
+
+  void doEvent(ForgetPasswordEvent event) {
+    switch (event) {
+      case MakeForgetPassword():
+        _forgetPassword(email: event.email);
+    }
+  }
+
+  Future<void> _forgetPassword({required String email}) async {
+    emit(
+      state.copyWith(
+        forgetPasswordState: state.forgetPasswordState?.copyWith(
+          isLoading: true,
+          errorMessage: '',
+        ),
+      ),
+    );
+
+    final response = await _forgetPasswordUseCase(
+      forgetPasswordEntity: ForgetPasswordEntity(email: email),
+    );
+
+    switch (response) {
+      case SuccessResponse<MessageEntity>():
+        emit(
+          state.copyWith(
+            forgetPasswordState: state.forgetPasswordState?.copyWith(
+              isLoading: false,
+              data: response.data,
+            ),
+          ),
+        );
+      case ErrorResponse<MessageEntity>():
+        emit(
+          state.copyWith(
+            forgetPasswordState: state.forgetPasswordState?.copyWith(
+              isLoading: false,
+              errorMessage: response.errMessage,
+            ),
+          ),
+        );
+    }
+  }
+}

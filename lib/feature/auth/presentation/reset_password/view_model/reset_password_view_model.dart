@@ -1,0 +1,68 @@
+import 'package:exam_app/config/base_response/base_response.dart';
+import 'package:exam_app/feature/auth/domain/entities/message_entity.dart';
+import 'package:exam_app/feature/auth/domain/entities/reset_password_entity.dart';
+import 'package:exam_app/feature/auth/domain/use_cases/reset_password_use_case.dart';
+import 'package:exam_app/feature/auth/presentation/reset_password/view_model/reset_password_event.dart';
+import 'package:exam_app/feature/auth/presentation/reset_password/view_model/reset_password_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
+@injectable
+class ResetPasswordViewModel extends Cubit<ResetPasswordState> {
+  ResetPasswordViewModel(this._resetPasswordUseCase)
+      : super(ResetPasswordState.initial());
+
+  final ResetPasswordUseCase _resetPasswordUseCase;
+
+  void doEvent(ResetPasswordEvent event) {
+    switch (event) {
+      case MakeResetPassword():
+        _resetPassword(
+          email: event.email,
+          newPassword: event.newPassword,
+        );
+    }
+  }
+
+  Future<void> _resetPassword({
+    required String email,
+    required String newPassword,
+  }) async {
+    emit(
+      state.copyWith(
+        resetPasswordState: state.resetPasswordState?.copyWith(
+          isLoading: true,
+          errorMessage: '',
+        ),
+      ),
+    );
+
+    final response = await _resetPasswordUseCase(
+      resetPasswordEntity: ResetPasswordEntity(
+        email: email,
+        newPassword: newPassword,
+      ),
+    );
+
+    switch (response) {
+      case SuccessResponse<MessageEntity>():
+        emit(
+          state.copyWith(
+            resetPasswordState: state.resetPasswordState?.copyWith(
+              isLoading: false,
+              data: response.data,
+            ),
+          ),
+        );
+      case ErrorResponse<MessageEntity>():
+        emit(
+          state.copyWith(
+            resetPasswordState: state.resetPasswordState?.copyWith(
+              isLoading: false,
+              errorMessage: response.errMessage,
+            ),
+          ),
+        );
+    }
+  }
+}
