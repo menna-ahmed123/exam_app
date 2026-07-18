@@ -1,11 +1,11 @@
 import 'package:exam_app/config/di/injection.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
-import 'package:exam_app/feature/auth/presentation/email_verification/view_model/email_verification_view_model.dart';
-import 'package:exam_app/feature/auth/presentation/email_verification/views/email_verification_view.dart';
-import 'package:exam_app/feature/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
-import 'package:exam_app/feature/auth/presentation/forget_password/views/forget_password_view.dart';
-import 'package:exam_app/feature/auth/presentation/reset_password/view_model/reset_password_view_model.dart';
-import 'package:exam_app/feature/auth/presentation/reset_password/views/reset_password_view.dart';
+import 'package:exam_app/feature/forget_password/presentation/email_verification/view_model/email_verification_view_model.dart';
+import 'package:exam_app/feature/forget_password/presentation/email_verification/views/email_verification_view.dart';
+import 'package:exam_app/feature/forget_password/presentation/forget_password/view_model/forget_password_view_model.dart';
+import 'package:exam_app/feature/forget_password/presentation/forget_password/views/forget_password_view.dart';
+import 'package:exam_app/feature/forget_password/presentation/reset_password/view_model/reset_password_view_model.dart';
+import 'package:exam_app/feature/forget_password/presentation/reset_password/views/reset_password_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
