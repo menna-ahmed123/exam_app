@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/presentation/forget_password/widgets/forget_password_view_body.dart';
+import 'package:exam_app/feature/forget_password/presentation/forget_password/widgets/forget_password_view_body.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordView extends StatelessWidget {

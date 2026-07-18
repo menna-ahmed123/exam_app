@@ -1,12 +1,12 @@
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/config/base_state/base_state.dart';
-import 'package:exam_app/feature/auth/domain/entities/forget_password_entity.dart';
-import 'package:exam_app/feature/auth/domain/entities/message_entity.dart';
-import 'package:exam_app/feature/auth/domain/entities/verify_reset_code_entity.dart';
-import 'package:exam_app/feature/auth/domain/use_cases/forget_password_use_case.dart';
-import 'package:exam_app/feature/auth/domain/use_cases/verify_reset_code_use_case.dart';
-import 'package:exam_app/feature/auth/presentation/email_verification/view_model/email_verification_event.dart';
-import 'package:exam_app/feature/auth/presentation/email_verification/view_model/email_verification_state.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/forget_password_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/message_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/verify_reset_code_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/use_cases/forget_password_use_case.dart';
+import 'package:exam_app/feature/forget_password/domain/use_cases/verify_reset_code_use_case.dart';
+import 'package:exam_app/feature/forget_password/presentation/email_verification/view_model/email_verification_event.dart';
+import 'package:exam_app/feature/forget_password/presentation/email_verification/view_model/email_verification_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 

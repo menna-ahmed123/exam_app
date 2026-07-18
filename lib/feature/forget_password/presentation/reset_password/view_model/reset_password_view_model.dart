@@ -1,9 +1,9 @@
 import 'package:exam_app/config/base_response/base_response.dart';
-import 'package:exam_app/feature/auth/domain/entities/message_entity.dart';
-import 'package:exam_app/feature/auth/domain/entities/reset_password_entity.dart';
-import 'package:exam_app/feature/auth/domain/use_cases/reset_password_use_case.dart';
-import 'package:exam_app/feature/auth/presentation/reset_password/view_model/reset_password_event.dart';
-import 'package:exam_app/feature/auth/presentation/reset_password/view_model/reset_password_state.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/message_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/reset_password_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/use_cases/reset_password_use_case.dart';
+import 'package:exam_app/feature/forget_password/presentation/reset_password/view_model/reset_password_event.dart';
+import 'package:exam_app/feature/forget_password/presentation/reset_password/view_model/reset_password_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 

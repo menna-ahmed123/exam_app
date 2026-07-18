@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/domain/entities/message_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/message_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'message_response_model.g.dart';

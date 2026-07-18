@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/presentation/email_verification/widgets/email_verification_view_body.dart';
+import 'package:exam_app/feature/forget_password/presentation/email_verification/widgets/email_verification_view_body.dart';
 import 'package:flutter/material.dart';
 
 class EmailVerificationView extends StatelessWidget {

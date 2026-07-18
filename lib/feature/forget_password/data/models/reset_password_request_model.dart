@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/domain/entities/reset_password_entity.dart';
+import 'package:exam_app/feature/forget_password/domain/entities/reset_password_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'reset_password_request_model.g.dart';
