@@ -10,14 +10,12 @@ class OtpInputField extends StatefulWidget {
     this.onChanged,
     this.onCompleted,
     this.errorText,
-    this.controller,
   });
 
   final int length;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onCompleted;
   final String? errorText;
-  final TextEditingController? controller;
 
   @override
   State<OtpInputField> createState() => _OtpInputFieldState();

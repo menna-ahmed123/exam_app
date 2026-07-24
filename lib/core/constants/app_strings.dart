@@ -53,4 +53,8 @@ class AppStrings {
   static const String newPassword = 'New password';
   static const String passwordResetSuccess =
       'Password reset successfully. Please login.';
+
+  // ===== Home =====
+  static const String home = 'Home';
+  static const String logout = 'Logout';
 }

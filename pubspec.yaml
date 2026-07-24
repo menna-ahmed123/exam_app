@@ -35,6 +35,7 @@ dependencies:
   url_launcher: ^6.3.1
   intl: ^0.20.2
   freezed_annotation: ^3.1.0
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -45,9 +46,13 @@ dev_dependencies:
   json_serializable: ^6.9.5
   retrofit_generator: ^10.2.7
   freezed: ^3.2.5
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/
 
   fonts:
     - family: Inter
@@ -60,3 +65,34 @@ flutter:
           weight: 600
         - asset: assets/fonts/inter/Inter_18pt-Bold.ttf
           weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/app_icon.png
+  adaptive_icon_background: "#02369C"
+  adaptive_icon_foreground: assets/images/app_icon.png
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/images/app_icon.png
+    background_color: "#02369C"
+    theme_color: "#02369C"
+  macos:
+    generate: true
+    image_path: assets/images/app_icon.png
+  windows:
+    generate: true
+    image_path: assets/images/app_icon.png
+
+flutter_native_splash:
+  color: "#02369C"
+  image: assets/images/app_icon.png
+  android_12:
+    color: "#02369C"
+    image: assets/images/app_icon.png
+    icon_background_color: "#02369C"
+  ios: true
+  android: true
+  web: true
+  fullscreen: true

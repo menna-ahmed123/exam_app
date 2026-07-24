@@ -8,20 +8,28 @@ class SideBySideFields extends StatelessWidget {
     required this.leftHint,
     required this.rightLabel,
     required this.rightHint,
-    required this.onLeftChanged,
-    required this.onRightChanged,
+    this.leftController,
+    this.rightController,
+    this.onLeftChanged,
+    this.onRightChanged,
     this.rightValidator,
     this.leftValidator,
+    this.leftObscureText = false,
+    this.rightObscureText = false,
   });
 
   final String leftLabel;
   final String leftHint;
   final String rightLabel;
   final String rightHint;
-  final ValueChanged<String> onLeftChanged;
-  final ValueChanged<String> onRightChanged;
+  final TextEditingController? leftController;
+  final TextEditingController? rightController;
+  final ValueChanged<String>? onLeftChanged;
+  final ValueChanged<String>? onRightChanged;
   final String? Function(String?)? rightValidator;
   final String? Function(String?)? leftValidator;
+  final bool leftObscureText;
+  final bool rightObscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +41,8 @@ class SideBySideFields extends StatelessWidget {
             child: AppTextField(
               label: leftLabel,
               hint: leftHint,
+              controller: leftController,
+              obscureText: leftObscureText,
               onChanged: onLeftChanged,
               validator: leftValidator,
             ),
@@ -42,12 +52,14 @@ class SideBySideFields extends StatelessWidget {
             child: AppTextField(
               label: rightLabel,
               hint: rightHint,
+              controller: rightController,
+              obscureText: rightObscureText,
               onChanged: onRightChanged,
               validator: rightValidator,
             ),
           ),
         ],
-      )
+      ),
     );
   }
 }

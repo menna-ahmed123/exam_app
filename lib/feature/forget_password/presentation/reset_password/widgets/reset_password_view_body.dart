@@ -26,9 +26,17 @@ class ResetPasswordViewBody extends StatefulWidget {
 
 class _ResetPasswordViewBodyState extends State<ResetPasswordViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
-  String newPassword = '';
-  String confirmPassword = '';
+
+  @override
+  void dispose() {
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,24 +61,22 @@ class _ResetPasswordViewBodyState extends State<ResetPasswordViewBody> {
             AppTextField(
               label: AppStrings.newPassword,
               hint: AppStrings.enterYourPassword,
+              controller: newPasswordController,
               obscureText: true,
               textInputAction: TextInputAction.next,
               validator: Validators.password,
-              onChanged: (value) {
-                newPassword = value;
-              },
             ),
             const SizedBox(height: AppSpacing.fieldGap),
             AppTextField(
               label: AppStrings.confirmPassword,
               hint: AppStrings.confirmPassword,
+              controller: confirmPasswordController,
               obscureText: true,
               textInputAction: TextInputAction.done,
-              validator: (value) =>
-                  Validators.confirmPassword(value, newPassword),
-              onChanged: (value) {
-                confirmPassword = value;
-              },
+              validator: (value) => Validators.confirmPassword(
+                value,
+                newPasswordController.text,
+              ),
             ),
             const Spacer(),
             BlocConsumer<ResetPasswordViewModel, ResetPasswordState>(
@@ -100,7 +106,7 @@ class _ResetPasswordViewBodyState extends State<ResetPasswordViewBody> {
                       context.read<ResetPasswordViewModel>().doEvent(
                             MakeResetPassword(
                               email: widget.email,
-                              newPassword: newPassword,
+                              newPassword: newPasswordController.text,
                             ),
                           );
                     } else {

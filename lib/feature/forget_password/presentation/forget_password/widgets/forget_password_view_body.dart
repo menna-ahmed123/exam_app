@@ -24,8 +24,14 @@ class ForgetPasswordViewBody extends StatefulWidget {
 
 class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
   AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
-  String email = '';
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +56,11 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
             AppTextField(
               label: AppStrings.email,
               hint: AppStrings.enterYourEmail,
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.email],
               validator: Validators.email,
-              onChanged: (value) {
-                email = value;
-              },
             ),
             const Spacer(),
             BlocConsumer<ForgetPasswordViewModel, ForgetPasswordState>(
@@ -71,7 +75,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                 } else if (state.forgetPasswordState?.data != null) {
                   context.push(
                     AppRoutes.emailVerification,
-                    extra: email.trim(),
+                    extra: emailController.text.trim(),
                   );
                 }
               },
@@ -82,7 +86,9 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       context.read<ForgetPasswordViewModel>().doEvent(
-                            MakeForgetPassword(email: email.trim()),
+                            MakeForgetPassword(
+                              email: emailController.text.trim(),
+                            ),
                           );
                     } else {
                       setState(() {

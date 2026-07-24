@@ -10,6 +10,7 @@ import 'package:exam_app/core/widgets/app_checkbox_tile.dart';
 import 'package:exam_app/core/widgets/app_footer_link.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/core/widgets/app_text_link.dart';
+import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_event.dart';
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_state.dart';
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart';
@@ -26,9 +27,17 @@ class LoginViewBody extends StatefulWidget {
 
 class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
-  String email = '', password = '';
   bool rememberMe = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,26 +58,22 @@ class _LoginViewBodyState extends State<LoginViewBody> {
               AppTextField(
                 label: AppStrings.email,
                 hint: AppStrings.enterYourEmail,
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 validator: Validators.email,
-                onChanged: (value) {
-                  email = value;
-                },
               ),
               SizedBox(height: AppSpacing.sectionGap),
 
               AppTextField(
                 label: AppStrings.password,
                 hint: AppStrings.enterYourPassword,
+                controller: passwordController,
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.password],
                 validator: Validators.password,
-                onChanged: (value) {
-                  password = value;
-                },
               ),
               SizedBox(height: AppSpacing.fieldGap),
 
@@ -103,7 +108,8 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                       backgroundColor: AppColors.error,
                     );
                   } else if (state.loginState?.data != null) {
-                    context.push(AppRoutes.home);
+                    context.read<AuthCubit>().setAuthenticated();
+                    context.go(AppRoutes.home);
                   }
                 },
                 builder: (context, state) {
@@ -112,7 +118,10 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         context.read<LoginViewModel>().doEvent(
-                          MakeLogin(email: email, password: password),
+                          MakeLogin(
+                            email: emailController.text.trim(),
+                            password: passwordController.text,
+                          ),
                         );
                       } else {
                         setState(() {

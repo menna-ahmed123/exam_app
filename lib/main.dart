@@ -1,12 +1,19 @@
 import 'package:exam_app/config/di/injection.dart';
 import 'package:exam_app/core/resources/app_theme.dart';
 import 'package:exam_app/core/routing/app_router.dart';
+import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
+import 'package:exam_app/feature/auth/presentation/auth/auth_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
+  configureDependencies();
+  await getIt<AuthCubit>().checkAuthStatus();
+
+  FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
 
@@ -15,9 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
+    return AuthWrapper(
+      child: MaterialApp.router(
+        theme: AppTheme.lightTheme,
+        routerConfig: AppRouter.router,
+      ),
     );
   }
 }

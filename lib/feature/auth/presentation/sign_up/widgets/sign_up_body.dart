@@ -1,6 +1,7 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_colors.dart';
+import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
@@ -8,6 +9,7 @@ import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/core/widgets/app_footer_link.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/feature/auth/domain/entities/sign_up_entity.dart';
+import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_event.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_state.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_view_model.dart';
@@ -25,15 +27,27 @@ class SignUpViewBody extends StatefulWidget {
 
 class _SignUpViewBodyState extends State<SignUpViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
 
-  String userName = '';
-  String firstName = '';
-  String lastName = '';
-  String email = '';
-  String password = '';
-  String confirmPassword = '';
-  String phone = '';
+  @override
+  void dispose() {
+    userNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +69,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
               AppTextField(
                 label: AppStrings.userName,
                 hint: AppStrings.enterYourUserName,
+                controller: userNameController,
                 validator: Validators.userName,
-                onChanged: (value) {
-                  userName = value;
-                },
               ),
               const SizedBox(height: AppSpacing.sectionGap),
 
@@ -67,42 +79,35 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                 leftHint: AppStrings.enterFirstName,
                 rightLabel: AppStrings.lastName,
                 rightHint: AppStrings.enterLastName,
-                onLeftChanged: (value) {
-                  firstName = value;
-                },
-                onRightChanged: (value) {
-                  lastName = value;
-                },
-                
-               
+                leftController: firstNameController,
+                rightController: lastNameController,
               ),
               const SizedBox(height: AppSpacing.sectionGap),
 
               AppTextField(
                 label: AppStrings.email,
                 hint: AppStrings.enterYourEmail,
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 validator: Validators.email,
-                onChanged: (value) {
-                  email = value;
-                },
               ),
               const SizedBox(height: AppSpacing.sectionGap),
 
               SideBySideFields(
-                
                 leftLabel: AppStrings.password,
                 leftHint: AppStrings.enterPassword,
                 rightLabel: AppStrings.confirmPassword,
                 rightHint: AppStrings.confirmPassword,
-                onLeftChanged: (value) {
-                  password = value;
-                },
-                onRightChanged: (value) {
-                  confirmPassword = value;
-                },
-               
+                leftController: passwordController,
+                rightController: confirmPasswordController,
+                leftObscureText: true,
+                rightObscureText: true,
+                leftValidator: Validators.password,
                 rightValidator: (value) {
-                  return Validators.confirmPassword(value, password);
+                  return Validators.confirmPassword(
+                    value,
+                    passwordController.text,
+                  );
                 },
               ),
               const SizedBox(height: AppSpacing.sectionGap),
@@ -110,9 +115,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
               AppTextField(
                 label: AppStrings.phoneNumber,
                 hint: AppStrings.enterPhoneNumber,
-                onChanged: (value) {
-                  phone = value;
-                },
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: AppSpacing.buttonTopGap),
 
@@ -125,7 +129,8 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                       backgroundColor: AppColors.error,
                     );
                   } else if (state.signUpState?.data != null) {
-                    context.pop();
+                    context.read<AuthCubit>().setAuthenticated();
+                    context.go(AppRoutes.home);
                   }
                 },
                 builder: (context, state) {
@@ -135,13 +140,13 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         final signUpEntity = SignUpEntity(
-                          username: userName,
-                          firstName: firstName,
-                          lastName: lastName,
-                          email: email,
-                          password: password,
-                          rePassword: confirmPassword,
-                          phone: phone,
+                          username: userNameController.text.trim(),
+                          firstName: firstNameController.text.trim(),
+                          lastName: lastNameController.text.trim(),
+                          email: emailController.text.trim(),
+                          password: passwordController.text,
+                          rePassword: confirmPasswordController.text,
+                          phone: phoneController.text.trim(),
                         );
 
                         context.read<SignUpViewModel>().doEvent(

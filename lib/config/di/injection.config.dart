@@ -23,6 +23,8 @@ import 'package:exam_app/feature/auth/domain/use_cases/login_use_case.dart'
     as _i966;
 import 'package:exam_app/feature/auth/domain/use_cases/sign_up_use_case.dart'
     as _i287;
+import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart'
+    as _i541;
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart'
     as _i196;
 import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_view_model.dart'
@@ -78,6 +80,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i939.AuthRemoteDataSourceImpl(
         authApiClient: gh<_i355.AuthApiClient>(),
       ),
+    );
+    gh.lazySingleton<_i541.AuthCubit>(
+      () => _i541.AuthCubit(gh<_i1037.SecureStorageService>()),
     );
     gh.lazySingleton<_i1024.ForgetPasswordRemoteDataSource>(
       () => _i218.ForgetPasswordRemoteDataSourceImpl(
