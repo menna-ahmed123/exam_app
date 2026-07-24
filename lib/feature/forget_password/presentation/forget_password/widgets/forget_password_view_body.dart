@@ -24,7 +24,7 @@ class ForgetPasswordViewBody extends StatefulWidget {
 
 class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   String email = '';
 
   @override
@@ -35,7 +35,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
       ),
       child: Form(
         key: formKey,
-        autovalidateMode: autovalidateMode,
+        autovalidateMode: autoValidateMode,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -86,7 +86,7 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                           );
                     } else {
                       setState(() {
-                        autovalidateMode = AutovalidateMode.always;
+                        autoValidateMode = AutovalidateMode.always;
                       });
                     }
                   },
