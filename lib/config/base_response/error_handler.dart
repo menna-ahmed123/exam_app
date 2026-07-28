@@ -7,7 +7,6 @@ class ErrorHandler {
     if (error is DioException) {
       return fromDioException(error);
     }
-
     return 'Something went wrong, please try again.';
   }
 
@@ -16,29 +15,25 @@ class ErrorHandler {
     if (serverMessage != null && serverMessage.isNotEmpty) {
       return serverMessage;
     }
+    return _mapDioExceptionType(error);
+  }
 
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.transformTimeout:
-        return 'Connection timeout, please try again.';
-
-      case DioExceptionType.connectionError:
-        return 'No internet connection, please check your network.';
-
-      case DioExceptionType.badCertificate:
-        return 'Invalid certificate, please try again later.';
-
-      case DioExceptionType.cancel:
-        return 'Request was cancelled.';
-
-      case DioExceptionType.badResponse:
-        return _mapStatusCode(error.response?.statusCode);
-
-      default:
-        return 'Something went wrong, please try again.';
-    }
+  static String _mapDioExceptionType(DioException error) {
+    return switch (error.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.transformTimeout =>
+        'Connection timeout, please try again.',
+      DioExceptionType.connectionError =>
+        'No internet connection, please check your network.',
+      DioExceptionType.badCertificate =>
+        'Invalid certificate, please try again later.',
+      DioExceptionType.cancel => 'Request was cancelled.',
+      DioExceptionType.badResponse =>
+        _mapStatusCode(error.response?.statusCode),
+      _ => 'Something went wrong, please try again.',
+    };
   }
 
   static String? _extractServerMessage(dynamic data) {

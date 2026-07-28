@@ -26,13 +26,13 @@ class AppButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryBlue,
           disabledBackgroundColor: AppColors.disabledButton,
-          foregroundColor: Colors.white,
-          disabledForegroundColor: Colors.white,
+          foregroundColor: AppColors.white,
+          disabledForegroundColor: AppColors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          textStyle: AppTextStyles.styleMedium16(color: Colors.white),
+          textStyle: AppTextStyles.styleMedium16(color: AppColors.white),
         ),
         child: isLoading
             ? const SizedBox(
@@ -40,7 +40,7 @@ class AppButton extends StatelessWidget {
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
               )
             : Text(text),

@@ -5,6 +5,7 @@ import 'package:exam_app/feature/auth/presentation/login/view_model/login_event.
 import 'package:exam_app/feature/auth/presentation/login/view_model/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+
 @injectable
 class LoginViewModel extends Cubit<LoginState> {
   LoginViewModel(this._loginUseCase) : super(LoginState.initial());
@@ -19,7 +20,16 @@ class LoginViewModel extends Cubit<LoginState> {
     }
   }
 
-  Future<void> _login({required String email, required String password}) async {
+  Future<void> _login({
+    required String email,
+    required String password,
+  }) async {
+    _emitLoading();
+    final response = await _loginUseCase(email: email, password: password);
+    _emitLoginResult(response);
+  }
+
+  void _emitLoading() {
     emit(
       state.copyWith(
         loginState: state.loginState?.copyWith(
@@ -28,34 +38,33 @@ class LoginViewModel extends Cubit<LoginState> {
         ),
       ),
     );
+  }
 
-    final BaseResponse<ResponseEntity> loginResponse = await _loginUseCase(
-      email: email,
-      password: password,
-    );
-
-    switch (loginResponse) {
+  void _emitLoginResult(BaseResponse<ResponseEntity> response) {
+    switch (response) {
       case SuccessResponse<ResponseEntity>():
-        emit(
-          state.copyWith(
-            loginState: state.loginState?.copyWith(
-              isLoading: false,
-              data: loginResponse.data,
-            ),
-          ),
-        );
-        break;
-
+        _emitSuccess(response.data);
       case ErrorResponse<ResponseEntity>():
-        emit(
-          state.copyWith(
-            loginState: state.loginState?.copyWith(
-              isLoading: false,
-              errorMessage: loginResponse.errMessage,
-            ),
-          ),
-        );
-        break;
+        _emitError(response.errMessage);
     }
+  }
+
+  void _emitSuccess(ResponseEntity data) {
+    emit(
+      state.copyWith(
+        loginState: state.loginState?.copyWith(isLoading: false, data: data),
+      ),
+    );
+  }
+
+  void _emitError(String message) {
+    emit(
+      state.copyWith(
+        loginState: state.loginState?.copyWith(
+          isLoading: false,
+          errorMessage: message,
+        ),
+      ),
+    );
   }
 }

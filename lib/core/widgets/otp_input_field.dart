@@ -156,7 +156,7 @@ class _OtpBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = hasError ? AppColors.error : Colors.transparent;
+    final borderColor = hasError ? AppColors.error : AppColors.transparent;
 
     return SizedBox(
       width: 56,

@@ -10,18 +10,18 @@ class AppTheme {
 
     fontFamily: 'Inter',
 
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: AppColors.white,
 
     primaryColor: AppColors.primaryBlue,
 
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryBlue,
       error: AppColors.error,
-      surface: Colors.white,
+      surface: AppColors.white,
     ),
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       elevation: 0,
       centerTitle: false,
       iconTheme: IconThemeData(color: AppColors.primaryText),
@@ -42,7 +42,7 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryBlue,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.white,
         minimumSize: const Size(double.infinity, 48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         textStyle: AppTextStyles.styleMedium16(),
