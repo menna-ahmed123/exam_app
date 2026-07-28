@@ -1,4 +1,4 @@
-import 'package:exam_app/core/resources/app_colors.dart';
+import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
 import 'package:exam_app/core/widgets/app_text_link.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class AppFooterLink extends StatelessWidget {
         Text(
           prefixText,
           style: AppTextStyles.styleRegular14().copyWith(
-            color: AppColors.primaryText,
+            color: AppPalette.primaryText,
           ),
         ),
         const SizedBox(width: 4),

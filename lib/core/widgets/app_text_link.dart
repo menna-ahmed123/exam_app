@@ -1,4 +1,4 @@
-import 'package:exam_app/core/resources/app_colors.dart';
+import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -23,9 +23,9 @@ class AppTextLink extends StatelessWidget {
       child: Text(
         text,
         style: AppTextStyles.styleRegular14().copyWith(
-          color: color ?? AppColors.primaryBlue,
+          color: color ?? AppPalette.primaryBlue,
           decoration: underline ? TextDecoration.underline : null,
-          decorationColor: color ?? AppColors.primaryBlue,
+          decorationColor: color ?? AppPalette.primaryBlue,
         ),
       ),
     );

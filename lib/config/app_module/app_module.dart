@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
-BaseOptions _createBaseOptions() {
+BaseOptions createBaseOptions() {
   return BaseOptions(
     baseUrl: ApiConstants.baseUrl,
     connectTimeout: ApiConstants.connectTimeout,
@@ -13,7 +13,7 @@ BaseOptions _createBaseOptions() {
   );
 }
 
-LogInterceptor _createDebugLogInterceptor() {
+LogInterceptor createDebugLogInterceptor() {
   return LogInterceptor(
     requestBody: true,
     responseBody: true,
@@ -24,11 +24,11 @@ LogInterceptor _createDebugLogInterceptor() {
 abstract class AppModule {
   @lazySingleton
   Dio dio() {
-    final dio = Dio(_createBaseOptions());
+    final client = Dio(createBaseOptions());
     if (kDebugMode) {
-      dio.interceptors.add(_createDebugLogInterceptor());
+      client.interceptors.add(createDebugLogInterceptor());
     }
-    return dio;
+    return client;
   }
 
   @lazySingleton
@@ -38,3 +38,5 @@ abstract class AppModule {
     );
   }
 }
+
+class AppModuleRegistry extends AppModule {}

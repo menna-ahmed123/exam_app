@@ -9,11 +9,11 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   configureDependencies();
   FlutterNativeSplash.remove();
-  runApp(const MyApp());
+  runApp(const ExamApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ExamApp extends StatelessWidget {
+  const ExamApp({super.key});
 
   @override
   Widget build(BuildContext context) {
