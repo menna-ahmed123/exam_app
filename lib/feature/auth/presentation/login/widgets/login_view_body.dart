@@ -22,10 +22,10 @@ class LoginViewBody extends StatefulWidget {
   const LoginViewBody({super.key});
 
   @override
-  State<LoginViewBody> createState() => _LoginViewBodyState();
+  State<LoginViewBody> createState() => LoginViewBodyState();
 }
 
-class _LoginViewBodyState extends State<LoginViewBody> {
+class LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();

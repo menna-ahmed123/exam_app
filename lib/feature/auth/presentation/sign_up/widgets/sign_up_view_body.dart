@@ -22,10 +22,10 @@ class SignUpViewBody extends StatefulWidget {
   const SignUpViewBody({super.key});
 
   @override
-  State<SignUpViewBody> createState() => _SignUpViewBodyState();
+  State<SignUpViewBody> createState() => SignUpViewBodyState();
 }
 
-class _SignUpViewBodyState extends State<SignUpViewBody> {
+class SignUpViewBodyState extends State<SignUpViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
