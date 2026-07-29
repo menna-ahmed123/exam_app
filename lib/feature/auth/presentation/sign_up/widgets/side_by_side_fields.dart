@@ -37,29 +37,33 @@ class SideBySideFields extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: AppTextField(
-              label: leftLabel,
-              hint: leftHint,
-              controller: leftController,
-              obscureText: leftObscureText,
-              onChanged: onLeftChanged,
-              validator: leftValidator,
-            ),
-          ),
+          Expanded(child: _leftField()),
           const SizedBox(width: 16),
-          Expanded(
-            child: AppTextField(
-              label: rightLabel,
-              hint: rightHint,
-              controller: rightController,
-              obscureText: rightObscureText,
-              onChanged: onRightChanged,
-              validator: rightValidator,
-            ),
-          ),
+          Expanded(child: _rightField()),
         ],
       ),
+    );
+  }
+
+  Widget _leftField() {
+    return AppTextField(
+      label: leftLabel,
+      hint: leftHint,
+      controller: leftController,
+      obscureText: leftObscureText,
+      onChanged: onLeftChanged,
+      validator: leftValidator,
+    );
+  }
+
+  Widget _rightField() {
+    return AppTextField(
+      label: rightLabel,
+      hint: rightHint,
+      controller: rightController,
+      obscureText: rightObscureText,
+      onChanged: onRightChanged,
+      validator: rightValidator,
     );
   }
 }

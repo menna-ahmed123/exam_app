@@ -1,18 +1,9 @@
 import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'user_model.dart';
+import 'package:exam_app/feature/auth/data/models/user_model.dart';
 
-part 'auth_response_model.g.dart';
-
-@JsonSerializable()
 class AuthResponseModel {
-  @JsonKey(name: 'message')
   final String message;
-
-  @JsonKey(name: 'token')
   final String token;
-
-  @JsonKey(name: 'user')
   final UserModel user;
 
   AuthResponseModel({
@@ -21,10 +12,21 @@ class AuthResponseModel {
     required this.user,
   });
 
-  factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$AuthResponseModelFromJson(json);
+  factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
+    return AuthResponseModel(
+      message: json['message'] as String,
+      token: json['token'] as String,
+      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$AuthResponseModelToJson(this);
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'token': token,
+      'user': user.toJson(),
+    };
+  }
 
   ResponseEntity toDomain() {
     return ResponseEntity(

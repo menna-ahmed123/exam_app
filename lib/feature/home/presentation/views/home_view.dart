@@ -11,25 +11,29 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppStrings.home,
-          style: AppTextStyles.styleMedium20(color: AppPalette.primaryText),
-        ),
-        actions: [
-          IconButton(
-            tooltip: AppStrings.logout,
-            onPressed: () => context.read<AuthCubit>().logout(),
-            icon: const Icon(Icons.logout, color: AppPalette.primaryBlue),
-          ),
-        ],
-      ),
+      appBar: _homeAppBar(context),
       body: Center(
         child: Text(
           AppStrings.home,
           style: AppTextStyles.styleRegular16(color: AppPalette.primaryText),
         ),
       ),
+    );
+  }
+
+  AppBar _homeAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        AppStrings.home,
+        style: AppTextStyles.styleMedium20(color: AppPalette.primaryText),
+      ),
+      actions: [
+        IconButton(
+          tooltip: AppStrings.logout,
+          onPressed: () => context.read<AuthCubit>().logout(),
+          icon: const Icon(Icons.logout, color: AppPalette.primaryBlue),
+        ),
+      ],
     );
   }
 }

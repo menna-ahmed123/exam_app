@@ -17,11 +17,16 @@ class SignUpViewModel extends Cubit<SignUpState> {
     switch (event) {
       case MakeSignUp():
         _signUp(signUpEntity: event.signUpEntity);
-        break;
     }
   }
 
   Future<void> _signUp({required SignUpEntity signUpEntity}) async {
+    _emitLoading();
+    final response = await _signUpUseCase(signUpEntity: signUpEntity);
+    _emitResult(response);
+  }
+
+  void _emitLoading() {
     emit(
       state.copyWith(
         signUpState: state.signUpState?.copyWith(
@@ -30,33 +35,33 @@ class SignUpViewModel extends Cubit<SignUpState> {
         ),
       ),
     );
+  }
 
-    final BaseResponse<ResponseEntity> signUpResponse = await _signUpUseCase(
-      signUpEntity: signUpEntity,
-    );
-
-    switch (signUpResponse) {
+  void _emitResult(BaseResponse<ResponseEntity> response) {
+    switch (response) {
       case SuccessResponse<ResponseEntity>():
-        emit(
-          state.copyWith(
-            signUpState: state.signUpState?.copyWith(
-              isLoading: false,
-              data: signUpResponse.data,
-            ),
-          ),
-        );
-        break;
-
+        _emitSuccess(response.data);
       case ErrorResponse<ResponseEntity>():
-        emit(
-          state.copyWith(
-            signUpState: state.signUpState?.copyWith(
-              isLoading: false,
-              errorMessage: signUpResponse.errMessage,
-            ),
-          ),
-        );
-        break;
+        _emitError(response.errMessage);
     }
+  }
+
+  void _emitSuccess(ResponseEntity data) {
+    emit(
+      state.copyWith(
+        signUpState: state.signUpState?.copyWith(isLoading: false, data: data),
+      ),
+    );
+  }
+
+  void _emitError(String message) {
+    emit(
+      state.copyWith(
+        signUpState: state.signUpState?.copyWith(
+          isLoading: false,
+          errorMessage: message,
+        ),
+      ),
+    );
   }
 }

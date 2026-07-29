@@ -17,18 +17,24 @@ import 'package:get_it/get_it.dart';
 final getIt = GetIt.instance;
 
 void configureDependencies() {
+  _registerCore();
+  _registerAuthData();
+  _registerAuthPresentation();
+}
+
+void _registerCore() {
   final appModule = AppModuleRegistry();
   getIt.registerLazySingleton<Dio>(appModule.dio);
   getIt.registerLazySingleton<FlutterSecureStorage>(appModule.secureStorage);
-  getIt.registerSingleton<AuthApiClient>(AuthApiClient(getIt<Dio>()));
   getIt.registerLazySingleton<SecureStorageService>(
     () => SecureStorageServiceImpl(getIt<FlutterSecureStorage>()),
   );
+}
+
+void _registerAuthData() {
+  getIt.registerSingleton<AuthApiClient>(AuthApiClient(getIt<Dio>()));
   getIt.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(authApiClient: getIt<AuthApiClient>()),
-  );
-  getIt.registerLazySingleton<AuthCubit>(
-    () => AuthCubit(getIt<SecureStorageService>()),
   );
   getIt.registerLazySingleton<AuthRepo>(
     () => AuthRepoImpl(
@@ -41,6 +47,12 @@ void configureDependencies() {
   );
   getIt.registerLazySingleton<SignUpUseCase>(
     () => SignUpUseCase(getIt<AuthRepo>()),
+  );
+}
+
+void _registerAuthPresentation() {
+  getIt.registerLazySingleton<AuthCubit>(
+    () => AuthCubit(getIt<SecureStorageService>()),
   );
   getIt.registerFactory<LoginViewModel>(
     () => LoginViewModel(getIt<LoginUseCase>()),

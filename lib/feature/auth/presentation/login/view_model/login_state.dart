@@ -1,16 +1,16 @@
-import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:exam_app/config/base_state/base_state.dart';
+import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
 
-part 'login_state.freezed.dart';
+class LoginState {
+  const LoginState({this.loginState});
 
-@freezed
-sealed class LoginState with _$LoginState {
-  const factory LoginState({BaseState<ResponseEntity>? loginState}) =
-      _LoginState;
+  final BaseState<ResponseEntity>? loginState;
 
-  factory LoginState.initial() =>
-      LoginState(loginState: BaseState<ResponseEntity>());
-      
-      
+  factory LoginState.initial() {
+    return LoginState(loginState: BaseState<ResponseEntity>());
+  }
+
+  LoginState copyWith({BaseState<ResponseEntity>? loginState}) {
+    return LoginState(loginState: loginState ?? this.loginState);
+  }
 }

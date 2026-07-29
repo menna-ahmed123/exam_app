@@ -45,107 +45,128 @@ class _LoginViewBodyState extends State<LoginViewBody> {
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.screenHorizontal,
       ),
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          autovalidateMode: autovalidateMode,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 56),
-              AppBackHeader(title: AppStrings.login),
-              SizedBox(height: AppSpacing.sectionGap),
-              AppTextField(
-                label: AppStrings.email,
-                hint: AppStrings.enterYourEmail,
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.email],
-                validator: Validators.email,
-              ),
-              SizedBox(height: AppSpacing.sectionGap),
+      child: SingleChildScrollView(child: _loginForm()),
+    );
+  }
 
-              AppTextField(
-                label: AppStrings.password,
-                hint: AppStrings.enterYourPassword,
-                controller: passwordController,
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.password],
-                validator: Validators.password,
-              ),
-              SizedBox(height: AppSpacing.fieldGap),
-
-              Row(
-                children: [
-                  AppCheckboxTile(
-                    label: AppStrings.rememberMe,
-                    value: rememberMe,
-                    onChanged: (bool? v) {
-                      setState(() {
-                        rememberMe = v ?? false;
-                      });
-                    },
-                  ),
-                  Spacer(),
-                  AppTextLink(
-                    onPressed: () {
-                      context.push(AppRoutes.forgetPassword);
-                    },
-                    text: AppStrings.forgetPassword,
-                    color: AppPalette.primaryText,
-                  ),
-                ],
-              ),
-              SizedBox(height: AppSpacing.buttonTopGap),
-              BlocConsumer<LoginViewModel, LoginState>(
-                listener: (context, state) {
-                  if (state.loginState?.errorMessage.isNotEmpty ?? false) {
-                    buildSnackBar(
-                      context: context,
-                      message: state.loginState?.errorMessage ?? '',
-                      backgroundColor: AppPalette.error,
-                    );
-                  } else if (state.loginState?.data != null) {
-                    context.read<AuthCubit>().setAuthenticated();
-                    context.go(AppRoutes.home);
-                  }
-                },
-                builder: (context, state) {
-                  return AppButton(
-                    isLoading: state.loginState?.isLoading ?? false,
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        context.read<LoginViewModel>().doEvent(
-                          MakeLogin(
-                            email: emailController.text.trim(),
-                            password: passwordController.text,
-                          ),
-                        );
-                      } else {
-                        setState(() {
-                          autovalidateMode = AutovalidateMode.always;
-                        });
-                      }
-                    },
-                    text: AppStrings.login,
-                  );
-                },
-              ),
-              SizedBox(height: AppSpacing.fieldGap),
-
-              AppFooterLink(
-                onLinkPressed: () {
-                  context.push(AppRoutes.signUp);
-                },
-                prefixText: AppStrings.dontHaveAccount,
-                linkText: AppStrings.signUp,
-              ),
-            ],
-          ),
-        ),
+  Widget _loginForm() {
+    return Form(
+      key: formKey,
+      autovalidateMode: autovalidateMode,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _formChildren(),
       ),
+    );
+  }
+
+  List<Widget> _formChildren() {
+    return [
+      const SizedBox(height: 56),
+      const AppBackHeader(title: AppStrings.login),
+      const SizedBox(height: AppSpacing.sectionGap),
+      _emailField(),
+      const SizedBox(height: AppSpacing.sectionGap),
+      _passwordField(),
+      const SizedBox(height: AppSpacing.fieldGap),
+      _optionsRow(),
+      const SizedBox(height: AppSpacing.buttonTopGap),
+      _loginButton(),
+      const SizedBox(height: AppSpacing.fieldGap),
+      _signUpFooter(),
+    ];
+  }
+
+  Widget _emailField() {
+    return AppTextField(
+      label: AppStrings.email,
+      hint: AppStrings.enterYourEmail,
+      controller: emailController,
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      autofillHints: const [AutofillHints.email],
+      validator: Validators.email,
+    );
+  }
+
+  Widget _passwordField() {
+    return AppTextField(
+      label: AppStrings.password,
+      hint: AppStrings.enterYourPassword,
+      controller: passwordController,
+      obscureText: true,
+      textInputAction: TextInputAction.done,
+      autofillHints: const [AutofillHints.password],
+      validator: Validators.password,
+    );
+  }
+
+  Widget _optionsRow() {
+    return Row(
+      children: [
+        AppCheckboxTile(
+          label: AppStrings.rememberMe,
+          value: rememberMe,
+          onChanged: (bool? value) {
+            setState(() => rememberMe = value ?? false);
+          },
+        ),
+        const Spacer(),
+        AppTextLink(
+          onPressed: () => context.push(AppRoutes.forgetPassword),
+          text: AppStrings.forgetPassword,
+          color: AppPalette.primaryText,
+        ),
+      ],
+    );
+  }
+
+  Widget _loginButton() {
+    return BlocConsumer<LoginViewModel, LoginState>(
+      listener: _onLoginState,
+      builder: (context, state) {
+        return AppButton(
+          isLoading: state.loginState?.isLoading ?? false,
+          onPressed: _submitLogin,
+          text: AppStrings.login,
+        );
+      },
+    );
+  }
+
+  void _onLoginState(BuildContext context, LoginState state) {
+    if (state.loginState?.errorMessage.isNotEmpty ?? false) {
+      buildSnackBar(
+        context: context,
+        message: state.loginState?.errorMessage ?? '',
+        backgroundColor: AppPalette.error,
+      );
+      return;
+    }
+    if (state.loginState?.data != null) {
+      context.read<AuthCubit>().setAuthenticated();
+      context.go(AppRoutes.home);
+    }
+  }
+
+  void _submitLogin() {
+    if (formKey.currentState!.validate()) {
+      context.read<LoginViewModel>().doEvent(
+        MakeLogin(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        ),
+      );
+      return;
+    }
+    setState(() => autovalidateMode = AutovalidateMode.always);
+  }
+
+  Widget _signUpFooter() {
+    return AppFooterLink(
+      onLinkPressed: () => context.push(AppRoutes.signUp),
+      prefixText: AppStrings.dontHaveAccount,
+      linkText: AppStrings.signUp,
     );
   }
 }

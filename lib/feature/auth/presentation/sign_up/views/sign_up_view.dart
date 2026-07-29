@@ -1,4 +1,4 @@
-import 'package:exam_app/feature/auth/presentation/sign_up/widgets/sign_up_body.dart';
+import 'package:exam_app/feature/auth/presentation/sign_up/widgets/sign_up_view_body.dart';
 import 'package:flutter/material.dart';
 
 class SignUpView extends StatelessWidget {
