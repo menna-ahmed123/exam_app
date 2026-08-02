@@ -4,16 +4,15 @@ import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/utils/validators.dart';
-import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/core/widgets/app_checkbox_tile.dart';
 import 'package:exam_app/core/widgets/app_footer_link.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/core/widgets/app_text_link.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
+import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/login/cubit/login_event.dart';
 import 'package:exam_app/feature/auth/presentation/login/cubit/login_state.dart';
-import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -62,8 +61,8 @@ class _LoginViewBodyState extends State<LoginViewBody> {
 
   List<Widget> _formChildren() {
     return [
-      const SizedBox(height: 56),
-      const AppBackHeader(title: AppStrings.login),
+      const SizedBox(height: 80),
+
       const SizedBox(height: AppSpacing.sectionGap),
       _emailField(),
       const SizedBox(height: AppSpacing.sectionGap),
