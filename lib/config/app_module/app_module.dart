@@ -38,5 +38,3 @@ abstract class AppModule {
     );
   }
 }
-
-class AppModuleRegistry extends AppModule {}

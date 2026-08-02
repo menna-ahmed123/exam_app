@@ -17,13 +17,15 @@ import 'package:exam_app/feature/home/presentation/views/home_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class AppRouter {
-  AppRouter._();
+  AppRouter(this.authCubit);
 
-  static final AuthCubit authCubit = getIt<AuthCubit>();
+  final AuthCubit authCubit;
 
-  static final GoRouter router = GoRouter(
+  late final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: true,
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
@@ -31,7 +33,7 @@ class AppRouter {
     routes: routes,
   );
 
-  static String? redirect(BuildContext context, GoRouterState state) {
+  String? redirect(BuildContext context, GoRouterState state) {
     final authStatus = authCubit.state.status;
     final location = state.matchedLocation;
     if (authStatus == AuthStatus.unknown) {
@@ -48,7 +50,7 @@ class AppRouter {
     return null;
   }
 
-  static bool isAuthFlowLocation(String location) {
+  bool isAuthFlowLocation(String location) {
     return location == AppRoutes.login ||
         location == AppRoutes.signUp ||
         location == AppRoutes.forgetPassword ||
@@ -56,61 +58,61 @@ class AppRouter {
         location == AppRoutes.resetPassword;
   }
 
-  static bool isLoginOrSignUp(String location) {
+  bool isLoginOrSignUp(String location) {
     return location == AppRoutes.login || location == AppRoutes.signUp;
   }
 
-  static final List<RouteBase> routes = [
-    GoRoute(
-      path: AppRoutes.login,
-      name: 'login',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<LoginViewModel>(),
-        child: const LoginView(),
-      ),
-    ),
-    GoRoute(
-      path: AppRoutes.signUp,
-      name: 'signUp',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<SignUpViewModel>(),
-        child: const SignUpView(),
-      ),
-    ),
-    GoRoute(
-      path: AppRoutes.home,
-      name: 'home',
-      builder: (context, state) => const HomeView(),
-    ),
-    GoRoute(
-      path: AppRoutes.forgetPassword,
-      name: 'forgetPassword',
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<ForgetPasswordViewModel>(),
-        child: const ForgetPasswordView(),
-      ),
-    ),
-    GoRoute(
-      path: AppRoutes.emailVerification,
-      name: 'emailVerification',
-      builder: (context, state) {
-        final email = state.extra as String? ?? '';
-        return BlocProvider(
-          create: (_) => getIt<EmailVerificationViewModel>(),
-          child: EmailVerificationView(email: email),
-        );
-      },
-    ),
-    GoRoute(
-      path: AppRoutes.resetPassword,
-      name: 'resetPassword',
-      builder: (context, state) {
-        final email = state.extra as String? ?? '';
-        return BlocProvider(
-          create: (_) => getIt<ResetPasswordViewModel>(),
-          child: ResetPasswordView(email: email),
-        );
-      },
-    ),
-  ];
+  List<RouteBase> get routes => [
+        GoRoute(
+          path: AppRoutes.login,
+          name: 'login',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<LoginViewModel>(),
+            child: const LoginView(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.signUp,
+          name: 'signUp',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<SignUpViewModel>(),
+            child: const SignUpView(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.home,
+          name: 'home',
+          builder: (context, state) => const HomeView(),
+        ),
+        GoRoute(
+          path: AppRoutes.forgetPassword,
+          name: 'forgetPassword',
+          builder: (context, state) => BlocProvider(
+            create: (_) => getIt<ForgetPasswordViewModel>(),
+            child: const ForgetPasswordView(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.emailVerification,
+          name: 'emailVerification',
+          builder: (context, state) {
+            final email = state.extra as String? ?? '';
+            return BlocProvider(
+              create: (_) => getIt<EmailVerificationViewModel>(),
+              child: EmailVerificationView(email: email),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.resetPassword,
+          name: 'resetPassword',
+          builder: (context, state) {
+            final email = state.extra as String? ?? '';
+            return BlocProvider(
+              create: (_) => getIt<ResetPasswordViewModel>(),
+              child: ResetPasswordView(email: email),
+            );
+          },
+        ),
+      ];
 }
