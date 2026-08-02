@@ -18,10 +18,10 @@ class OtpInputField extends StatefulWidget {
   final String? errorText;
 
   @override
-  State<OtpInputField> createState() => OtpInputFieldState();
+  State<OtpInputField> createState() => _OtpInputFieldState();
 }
 
-class OtpInputFieldState extends State<OtpInputField> {
+class _OtpInputFieldState extends State<OtpInputField> {
   late final List<TextEditingController> controllers;
   late final List<FocusNode> focusNodes;
 

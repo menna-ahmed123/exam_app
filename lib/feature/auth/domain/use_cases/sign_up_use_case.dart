@@ -1,21 +1,18 @@
 import 'package:exam_app/config/base_response/base_response.dart';
-import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
+import 'package:exam_app/feature/auth/domain/entities/auth_response_entity.dart';
 import 'package:exam_app/feature/auth/domain/entities/sign_up_entity.dart';
 import 'package:exam_app/feature/auth/domain/repos/auth_repo.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton()
 class SignUpUseCase {
-  SignUpUseCase(this.signUpRepo);
+  SignUpUseCase(this._authRepo);
 
-  final AuthRepo signUpRepo;
+  final AuthRepo _authRepo;
 
-  Future<BaseResponse<ResponseEntity>> call({
-  required SignUpEntity signUpEntity
-  }) async {
-    final BaseResponse<ResponseEntity> signUpResponseEntity = await signUpRepo
-        .signUp(signUpEntity: signUpEntity);
-
-    return signUpResponseEntity;
+  Future<BaseResponse<AuthResponseEntity>> call({
+    required SignUpEntity signUpEntity,
+  }) {
+    return _authRepo.signUp(signUpEntity: signUpEntity);
   }
 }

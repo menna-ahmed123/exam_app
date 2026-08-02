@@ -1,19 +1,16 @@
-class SignUpEntity {
-  final String username;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String password;
-  final String rePassword;
-  final String phone;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  SignUpEntity({
-    required this.username,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.password,
-    required this.rePassword,
-    required this.phone,
-  });
+part 'sign_up_entity.freezed.dart';
+
+@freezed
+abstract class SignUpEntity with _$SignUpEntity {
+  const factory SignUpEntity({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String password,
+    required String rePassword,
+    required String phone,
+  }) = _SignUpEntity;
 }

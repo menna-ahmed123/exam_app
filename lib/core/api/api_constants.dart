@@ -5,9 +5,9 @@ class ApiConstants {
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
 
-  static const String loginEndPoint = 'auth/signin';
-  static const String signUpEndPoint = 'auth/signup';
-  static const String forgetPasswordEndPoint = 'auth/forgotPassword';
-  static const String verifyResetCodeEndPoint = 'auth/verifyResetCode';
-  static const String resetPasswordEndPoint = 'auth/resetPassword';
+  static const String loginEndpoint = 'auth/signin';
+  static const String signUpEndpoint = 'auth/signup';
+  static const String forgotPasswordEndpoint = 'auth/forgotPassword';
+  static const String verifyResetCodeEndpoint = 'auth/verifyResetCode';
+  static const String resetPasswordEndpoint = 'auth/resetPassword';
 }

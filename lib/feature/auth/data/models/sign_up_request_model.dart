@@ -1,5 +1,9 @@
 import 'package:exam_app/feature/auth/domain/entities/sign_up_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'sign_up_request_model.g.dart';
+
+@JsonSerializable()
 class SignUpRequestModel {
   final String username;
   final String firstName;
@@ -19,6 +23,11 @@ class SignUpRequestModel {
     required this.phone,
   });
 
+  factory SignUpRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$SignUpRequestModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SignUpRequestModelToJson(this);
+
   factory SignUpRequestModel.fromDomain(SignUpEntity entity) {
     return SignUpRequestModel(
       username: entity.username,
@@ -29,29 +38,5 @@ class SignUpRequestModel {
       rePassword: entity.rePassword,
       phone: entity.phone,
     );
-  }
-
-  factory SignUpRequestModel.fromJson(Map<String, dynamic> json) {
-    return SignUpRequestModel(
-      username: json['username'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String,
-      rePassword: json['rePassword'] as String,
-      phone: json['phone'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'username': username,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'password': password,
-      'rePassword': rePassword,
-      'phone': phone,
-    };
   }
 }

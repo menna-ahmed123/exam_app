@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:exam_app/core/api/api_constants.dart';
+import 'package:exam_app/feature/auth/api/client/auth_api_client.dart';
+import 'package:exam_app/feature/forgot_password/api/client/forgot_password_api_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
@@ -30,6 +32,13 @@ abstract class AppModule {
     }
     return client;
   }
+
+  @lazySingleton
+  AuthApiClient authApiClient(Dio dio) => AuthApiClient(dio);
+
+  @lazySingleton
+  ForgotPasswordApiClient forgotPasswordApiClient(Dio dio) =>
+      ForgotPasswordApiClient(dio);
 
   @lazySingleton
   FlutterSecureStorage secureStorage() {

@@ -11,9 +11,9 @@ import 'package:exam_app/core/widgets/app_footer_link.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/core/widgets/app_text_link.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
-import 'package:exam_app/feature/auth/presentation/login/view_model/login_event.dart';
-import 'package:exam_app/feature/auth/presentation/login/view_model/login_state.dart';
-import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart';
+import 'package:exam_app/feature/auth/presentation/login/cubit/login_event.dart';
+import 'package:exam_app/feature/auth/presentation/login/cubit/login_state.dart';
+import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,10 +22,10 @@ class LoginViewBody extends StatefulWidget {
   const LoginViewBody({super.key});
 
   @override
-  State<LoginViewBody> createState() => LoginViewBodyState();
+  State<LoginViewBody> createState() => _LoginViewBodyState();
 }
 
-class LoginViewBodyState extends State<LoginViewBody> {
+class _LoginViewBodyState extends State<LoginViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -113,8 +113,8 @@ class LoginViewBodyState extends State<LoginViewBody> {
         ),
         const Spacer(),
         AppTextLink(
-          onPressed: () => context.push(AppRoutes.forgetPassword),
-          text: AppStrings.forgetPassword,
+          onPressed: () => context.push(AppRoutes.forgotPassword),
+          text: AppStrings.forgotPassword,
           color: AppPalette.primaryText,
         ),
       ],
@@ -122,7 +122,7 @@ class LoginViewBodyState extends State<LoginViewBody> {
   }
 
   Widget _loginButton() {
-    return BlocConsumer<LoginViewModel, LoginState>(
+    return BlocConsumer<LoginCubit, LoginState>(
       listener: _onLoginState,
       builder: (context, state) {
         return AppButton(
@@ -151,8 +151,8 @@ class LoginViewBodyState extends State<LoginViewBody> {
 
   void _submitLogin() {
     if (formKey.currentState!.validate()) {
-      context.read<LoginViewModel>().doEvent(
-        MakeLogin(
+      context.read<LoginCubit>().onEvent(
+        LoginSubmitted(
           email: emailController.text.trim(),
           password: passwordController.text,
         ),

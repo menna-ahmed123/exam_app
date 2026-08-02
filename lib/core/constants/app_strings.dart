@@ -1,4 +1,4 @@
-/// All UI strings extracted from Login / Sign up / Forget password / Reset password screens
+/// All UI strings extracted from Login / Sign up / Forgot password / Reset password screens
 class AppStrings {
   AppStrings._();
 
@@ -9,7 +9,7 @@ class AppStrings {
   static const String password = 'Password';
   static const String enterYourPassword = 'Enter you password';
   static const String rememberMe = 'Remember me';
-  static const String forgetPassword = 'Forget password?';
+  static const String forgotPassword = 'Forgot password?';
   static const String dontHaveAccount = "Don't have an account?";
   static const String signUp = 'Sign up';
   static const String emailNotValid = 'This Email is not valid';
@@ -26,15 +26,14 @@ class AppStrings {
   static const String confirmPassword = 'Confirm password';
   static const String phoneNumber = 'Phone number';
   static const String enterPhoneNumber = 'Enter phone number';
-  static const String signup = 'Signup';
   static const String alreadyHaveAccount = 'Already have an account?';
   static const String userNameNotValid = 'This user name is not valid';
   static const String passwordNotMatched = 'Password not matched';
 
-  // ===== Forget password =====
+  // ===== Forgot password =====
   static const String passwordFlowHeader = 'Password';
-  static const String forgetPasswordTitle = 'Forget password';
-  static const String forgetPasswordSubtitle =
+  static const String forgotPasswordTitle = 'Forgot password';
+  static const String forgotPasswordSubtitle =
       'Please enter your email associated to your account';
   static const String continueText = 'Continue';
 

@@ -1,21 +1,17 @@
-class UserEntity {
-  final String id;
-  final String username;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String phone;
-  final String role;
-  final bool isVerified;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  UserEntity({
-    required this.id,
-    required this.username,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.role,
-    required this.isVerified,
-  });
+part 'user_entity.freezed.dart';
+
+@freezed
+abstract class UserEntity with _$UserEntity {
+  const factory UserEntity({
+    required String id,
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String role,
+    required bool isVerified,
+  }) = _UserEntity;
 }

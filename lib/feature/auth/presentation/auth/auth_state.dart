@@ -1,9 +1,16 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'auth_state.freezed.dart';
+
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
-class AuthState {
-  const AuthState({this.status = AuthStatus.unknown});
+@freezed
+abstract class AuthState with _$AuthState {
+  const AuthState._();
 
-  final AuthStatus status;
+  const factory AuthState({
+    @Default(AuthStatus.unknown) AuthStatus status,
+  }) = _AuthState;
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
   bool get isUnauthenticated => status == AuthStatus.unauthenticated;

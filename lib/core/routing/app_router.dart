@@ -3,16 +3,16 @@ import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/routing/go_router_refresh_stream.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_state.dart';
-import 'package:exam_app/feature/auth/presentation/login/view_model/login_view_model.dart';
+import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/login/views/login_view.dart';
-import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_view_model.dart';
+import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/views/sign_up_view.dart';
-import 'package:exam_app/feature/forget_password/presentation/email_verification/view_model/email_verification_view_model.dart';
-import 'package:exam_app/feature/forget_password/presentation/email_verification/views/email_verification_view.dart';
-import 'package:exam_app/feature/forget_password/presentation/forget_password/view_model/forget_password_view_model.dart';
-import 'package:exam_app/feature/forget_password/presentation/forget_password/views/forget_password_view.dart';
-import 'package:exam_app/feature/forget_password/presentation/reset_password/view_model/reset_password_view_model.dart';
-import 'package:exam_app/feature/forget_password/presentation/reset_password/views/reset_password_view.dart';
+import 'package:exam_app/feature/forgot_password/presentation/email_verification/cubit/email_verification_cubit.dart';
+import 'package:exam_app/feature/forgot_password/presentation/email_verification/views/email_verification_view.dart';
+import 'package:exam_app/feature/forgot_password/presentation/forgot_password/cubit/forgot_password_cubit.dart';
+import 'package:exam_app/feature/forgot_password/presentation/forgot_password/views/forgot_password_view.dart';
+import 'package:exam_app/feature/forgot_password/presentation/reset_password/cubit/reset_password_cubit.dart';
+import 'package:exam_app/feature/forgot_password/presentation/reset_password/views/reset_password_view.dart';
 import 'package:exam_app/feature/home/presentation/views/home_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,7 +53,7 @@ class AppRouter {
   bool isAuthFlowLocation(String location) {
     return location == AppRoutes.login ||
         location == AppRoutes.signUp ||
-        location == AppRoutes.forgetPassword ||
+        location == AppRoutes.forgotPassword ||
         location == AppRoutes.emailVerification ||
         location == AppRoutes.resetPassword;
   }
@@ -67,7 +67,7 @@ class AppRouter {
           path: AppRoutes.login,
           name: 'login',
           builder: (context, state) => BlocProvider(
-            create: (_) => getIt<LoginViewModel>(),
+            create: (_) => getIt<LoginCubit>(),
             child: const LoginView(),
           ),
         ),
@@ -75,7 +75,7 @@ class AppRouter {
           path: AppRoutes.signUp,
           name: 'signUp',
           builder: (context, state) => BlocProvider(
-            create: (_) => getIt<SignUpViewModel>(),
+            create: (_) => getIt<SignUpCubit>(),
             child: const SignUpView(),
           ),
         ),
@@ -85,11 +85,11 @@ class AppRouter {
           builder: (context, state) => const HomeView(),
         ),
         GoRoute(
-          path: AppRoutes.forgetPassword,
-          name: 'forgetPassword',
+          path: AppRoutes.forgotPassword,
+          name: 'forgotPassword',
           builder: (context, state) => BlocProvider(
-            create: (_) => getIt<ForgetPasswordViewModel>(),
-            child: const ForgetPasswordView(),
+            create: (_) => getIt<ForgotPasswordCubit>(),
+            child: const ForgotPasswordView(),
           ),
         ),
         GoRoute(
@@ -98,7 +98,7 @@ class AppRouter {
           builder: (context, state) {
             final email = state.extra as String? ?? '';
             return BlocProvider(
-              create: (_) => getIt<EmailVerificationViewModel>(),
+              create: (_) => getIt<EmailVerificationCubit>(),
               child: EmailVerificationView(email: email),
             );
           },
@@ -109,7 +109,7 @@ class AppRouter {
           builder: (context, state) {
             final email = state.extra as String? ?? '';
             return BlocProvider(
-              create: (_) => getIt<ResetPasswordViewModel>(),
+              create: (_) => getIt<ResetPasswordCubit>(),
               child: ResetPasswordView(email: email),
             );
           },

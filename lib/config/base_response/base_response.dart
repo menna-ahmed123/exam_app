@@ -13,7 +13,7 @@ sealed class BaseResponse<T> {
     } on DioException catch (error) {
       return ErrorResponse(
         error: error,
-        errMessage: ErrorHandler.fromDioException(error),
+        errorMessage: ErrorHandler.fromDioException(error),
       );
     } on Exception catch (error) {
       return ErrorResponse(error: error);
@@ -30,11 +30,11 @@ class SuccessResponse<T> extends BaseResponse<T> {
 }
 class ErrorResponse<T> extends BaseResponse<T> {
   final Exception? error;
-  final String errMessage;
+  final String errorMessage;
 
-  ErrorResponse({this.error, String? errMessage})
-    : errMessage =
-          errMessage ??
+  ErrorResponse({this.error, String? errorMessage})
+    : errorMessage =
+          errorMessage ??
           (error != null
               ? ErrorHandler.handle(error)
               : 'Something went wrong, please try again.');

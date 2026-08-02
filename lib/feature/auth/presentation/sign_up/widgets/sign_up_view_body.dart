@@ -10,9 +10,9 @@ import 'package:exam_app/core/widgets/app_footer_link.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/feature/auth/domain/entities/sign_up_entity.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
-import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_event.dart';
-import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_state.dart';
-import 'package:exam_app/feature/auth/presentation/sign_up/view_model/sign_up_view_model.dart';
+import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_event.dart';
+import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_state.dart';
+import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/widgets/side_by_side_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,10 +22,10 @@ class SignUpViewBody extends StatefulWidget {
   const SignUpViewBody({super.key});
 
   @override
-  State<SignUpViewBody> createState() => SignUpViewBodyState();
+  State<SignUpViewBody> createState() => _SignUpViewBodyState();
 }
 
-class SignUpViewBodyState extends State<SignUpViewBody> {
+class _SignUpViewBodyState extends State<SignUpViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
@@ -148,7 +148,7 @@ class SignUpViewBodyState extends State<SignUpViewBody> {
   }
 
   Widget _signUpButton() {
-    return BlocConsumer<SignUpViewModel, SignUpState>(
+    return BlocConsumer<SignUpCubit, SignUpState>(
       listener: _onSignUpState,
       builder: (context, state) {
         return AppButton(
@@ -177,8 +177,8 @@ class SignUpViewBodyState extends State<SignUpViewBody> {
 
   void _submitSignUp() {
     if (formKey.currentState!.validate()) {
-      context.read<SignUpViewModel>().doEvent(
-        MakeSignUp(signUpEntity: _buildSignUpEntity()),
+      context.read<SignUpCubit>().onEvent(
+        SignUpSubmitted(signUpEntity: _buildSignUpEntity()),
       );
       return;
     }

@@ -2,7 +2,7 @@ import 'package:exam_app/feature/auth/presentation/sign_up/widgets/sign_up_view_
 import 'package:flutter/material.dart';
 
 class SignUpView extends StatelessWidget {
-  const SignUpView({Key? key}) : super(key: key);
+  const SignUpView({super.key});
 
   @override
   Widget build(BuildContext context) {

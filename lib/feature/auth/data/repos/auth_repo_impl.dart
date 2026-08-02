@@ -3,67 +3,67 @@ import 'package:exam_app/core/storage/secure_storage_service.dart';
 import 'package:exam_app/core/storage/storage_keys.dart';
 import 'package:exam_app/feature/auth/data/data_sources/remote/auth_remote_data_source.dart';
 import 'package:exam_app/feature/auth/data/models/auth_response_model.dart';
-import 'package:exam_app/feature/auth/domain/entities/response_entity.dart';
+import 'package:exam_app/feature/auth/domain/entities/auth_response_entity.dart';
 import 'package:exam_app/feature/auth/domain/entities/sign_up_entity.dart';
 import 'package:exam_app/feature/auth/domain/repos/auth_repo.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: AuthRepo)
 class AuthRepoImpl implements AuthRepo {
-  final AuthRemoteDataSource authRemoteDataSource;
-  final SecureStorageService secureStorageService;
   AuthRepoImpl({
     required this.authRemoteDataSource,
     required this.secureStorageService,
   });
+
+  final AuthRemoteDataSource authRemoteDataSource;
+  final SecureStorageService secureStorageService;
+
   @override
-  Future<BaseResponse<ResponseEntity>> login({
+  Future<BaseResponse<AuthResponseEntity>> login({
     required String email,
     required String password,
   }) async {
-    final BaseResponse<AuthResponseModel> loginResponseModel =
-        await authRemoteDataSource.login(email: email, password: password);
+    final response = await authRemoteDataSource.login(
+      email: email,
+      password: password,
+    );
 
-    switch (loginResponseModel) {
+    switch (response) {
       case SuccessResponse<AuthResponseModel>():
-        final ResponseEntity loginResponseEntity = loginResponseModel.data
-            .toDomain();
-                   await writeToken(loginResponseEntity);
-
-
-        return SuccessResponse<ResponseEntity>(loginResponseEntity);
-
+        final entity = response.data.toDomain();
+        await _writeToken(entity);
+        return SuccessResponse<AuthResponseEntity>(entity);
       case ErrorResponse<AuthResponseModel>():
-        return ErrorResponse<ResponseEntity>(
-          errMessage: loginResponseModel.errMessage,
+        return ErrorResponse<AuthResponseEntity>(
+          errorMessage: response.errorMessage,
         );
     }
   }
 
   @override
-  Future<BaseResponse<ResponseEntity>> signUp({
+  Future<BaseResponse<AuthResponseEntity>> signUp({
     required SignUpEntity signUpEntity,
   }) async {
-    final BaseResponse<AuthResponseModel> signUpResponseModel =
-        await authRemoteDataSource.signUp(signUpEntity: signUpEntity);
+    final response = await authRemoteDataSource.signUp(
+      signUpEntity: signUpEntity,
+    );
 
-    switch (signUpResponseModel) {
+    switch (response) {
       case SuccessResponse<AuthResponseModel>():
-        final ResponseEntity signUpResponseEntity = signUpResponseModel.data
-            .toDomain();
-            await writeToken(signUpResponseEntity);
-        return SuccessResponse(signUpResponseEntity);
-         case ErrorResponse<AuthResponseModel>():
-        return ErrorResponse<ResponseEntity>(
-          errMessage: signUpResponseModel.errMessage,
+        final entity = response.data.toDomain();
+        await _writeToken(entity);
+        return SuccessResponse(entity);
+      case ErrorResponse<AuthResponseModel>():
+        return ErrorResponse<AuthResponseEntity>(
+          errorMessage: response.errorMessage,
         );
     }
   }
 
-  Future<void> writeToken(ResponseEntity signUpResponseEntity) async {
-     await secureStorageService.write(
-              key: StorageKeys.accessToken,
-              value: signUpResponseEntity.token,
-            );
+  Future<void> _writeToken(AuthResponseEntity entity) async {
+    await secureStorageService.write(
+      key: StorageKeys.accessToken,
+      value: entity.token,
+    );
   }
 }

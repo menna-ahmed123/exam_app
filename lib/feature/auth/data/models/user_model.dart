@@ -1,6 +1,11 @@
 import 'package:exam_app/feature/auth/domain/entities/user_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'user_model.g.dart';
+
+@JsonSerializable()
 class UserModel {
+  @JsonKey(name: '_id')
   final String id;
   final String username;
   final String firstName;
@@ -23,33 +28,10 @@ class UserModel {
     required this.createdAt,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['_id'] as String,
-      username: json['username'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
-      phone: json['phone'] as String,
-      role: json['role'] as String,
-      isVerified: json['isVerified'] as bool,
-      createdAt: json['createdAt'] as String,
-    );
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'username': username,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'phone': phone,
-      'role': role,
-      'isVerified': isVerified,
-      'createdAt': createdAt,
-    };
-  }
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   UserEntity toDomain() {
     return UserEntity(

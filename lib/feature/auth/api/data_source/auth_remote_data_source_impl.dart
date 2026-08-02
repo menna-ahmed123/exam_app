@@ -33,16 +33,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       AuthResponseModel authResponseModel = await authApiClient.signUp(
-        SignUpRequestModel(
-          username: signUpEntity.username,
-          firstName: signUpEntity.firstName,
-          lastName: signUpEntity.lastName,
-          email: signUpEntity.email,
-          password: signUpEntity.password,
-          rePassword: signUpEntity.rePassword,
-          phone: signUpEntity.phone,
-        ),
-        
+        SignUpRequestModel.fromDomain(signUpEntity),
       );
       return SuccessResponse<AuthResponseModel>(authResponseModel);
     } on Exception catch (e) {
