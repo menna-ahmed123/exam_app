@@ -10,4 +10,9 @@ class ApiConstants {
   static const String forgotPasswordEndpoint = 'auth/forgotPassword';
   static const String verifyResetCodeEndpoint = 'auth/verifyResetCode';
   static const String resetPasswordEndpoint = 'auth/resetPassword';
+
+  static const String subjectsEndpoint = 'subjects';
+  static const String examsEndpoint = 'exams';
+  static const String questionsEndpoint = 'questions';
+  static const String checkQuestionsEndpoint = 'questions/check';
 }

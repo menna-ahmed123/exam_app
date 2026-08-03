@@ -7,6 +7,17 @@ class ErrorHandler {
     if (error is DioException) {
       return fromDioException(error);
     }
+    final message = error.toString();
+    if (message.contains('subtype') ||
+        message.contains('FormatException') ||
+        message.contains('CheckedFromJsonException') ||
+        message.contains('type \'')) {
+      return 'Failed to read exam result. Please try again.';
+    }
+    if (message.isNotEmpty && message != 'Exception') {
+      final cleaned = message.replaceFirst(RegExp(r'^Exception:?\s*'), '');
+      if (cleaned.isNotEmpty) return cleaned;
+    }
     return 'Something went wrong, please try again.';
   }
 
@@ -49,9 +60,13 @@ class ErrorHandler {
   static String _mapStatusCode(int? statusCode) {
     switch (statusCode) {
       case 400:
+        return 'Invalid answers submitted, please try again.';
       case 401:
+        return 'Session expired, please login again.';
       case 403:
+        return 'You are not allowed to submit this exam.';
       case 404:
+        return 'Question not found.';
       case 409:
         return 'Something went wrong, please try again.';
       case 422:

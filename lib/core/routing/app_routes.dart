@@ -7,4 +7,9 @@ class AppRoutes {
   static const String emailVerification = '/verification';
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
+  static const String subjectExams = '/subject-exams';
+  static const String examInstructions = '/exam-instructions';
+  static const String takingExam = '/taking-exam';
+  static const String examScore = '/exam-score';
+  static const String examAnswers = '/exam-answers';
 }

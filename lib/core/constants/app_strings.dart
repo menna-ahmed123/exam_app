@@ -56,4 +56,62 @@ class AppStrings {
   // ===== Home =====
   static const String home = 'Home';
   static const String logout = 'Logout';
+
+  // ===== Explore =====
+  static const String survey = 'Survey';
+  static const String search = 'Search';
+  static const String browseBySubject = 'Browse by subject';
+  static const String explore = 'Explore';
+  static const String result = 'Result';
+  static const String profile = 'Profile';
+  static const String noSubjectsFound = 'No subjects found';
+  static const String noExamsFound = 'No exams found';
+  static const String noQuestionsFound = 'No questions found';
+  static const String noExamHistory = 'No exam history yet';
+  static const String exitExamTitle = 'Exit exam?';
+  static const String exitExamMessage =
+      'Your progress will be lost if you leave now.';
+  static const String exit = 'Exit';
+  static const String cancel = 'Cancel';
+  static const String availableExams = 'Available exams';
+  static const String yourHistory = 'Your history';
+  static const String results = 'Results';
+  static const String answers = 'Answers';
+  static const String correctedAnswersIn = 'corrected answers in';
+  static const String min = 'min';
+  static const String fromLabel = 'From';
+  static const String toLabel = 'To';
+
+  // ===== Exam instructions =====
+  static const String instructions = 'Instructions';
+  static const String start = 'Start';
+  static const String minutes = 'Minutes';
+  static const String question = 'Question';
+  static const String questions = 'Questions';
+  static const String instructionStableInternet =
+      'Ensure you have a stable internet connection.';
+  static const String instructionDontLeave =
+      "Don't leave the screen until you finish the exam.";
+  static const String instructionTimer =
+      'The timer starts once you tap Start.';
+  static const String instructionSubmit =
+      'Submit your answers before time runs out.';
+
+  // ===== Taking exam =====
+  static const String exam = 'Exam';
+  static const String back = 'Back';
+  static const String next = 'Next';
+  static const String finish = 'Finish';
+  static const String questionOf = 'Question';
+  static const String of = 'of';
+  static const String timeOutTitle = 'Time out !!';
+  static const String viewScore = 'View score';
+
+  // ===== Score =====
+  static const String examScore = 'Exam score';
+  static const String yourScore = 'Your score';
+  static const String correct = 'Correct';
+  static const String incorrect = 'Incorrect';
+  static const String showResults = 'Show results';
+  static const String startAgain = 'Start again';
 }
