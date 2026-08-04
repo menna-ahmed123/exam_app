@@ -192,14 +192,3 @@ Configured in `lib/core/api/api_constants.dart`.
 
 Postman docs: [Elevate Exam API](https://documenter.getpostman.com/view/5709532/2sAXxMfYUf)
 
-## Assets
-
-- Images: `assets/images/`
-- Fonts: Inter (`assets/fonts/inter/`) — Regular, Medium, SemiBold, Bold
-
-## Conventions
-
-- Prefer feature modules over dumping logic in `core/`
-- Reuse `AppPalette`, `AppTextStyles`, and shared widgets — no hardcoded one-off colors for exam feedback
-- Keep Cubit business logic out of widgets; pass typed route `extra` args (`ExamSessionArgs`, `ExamScoreArgs`, `ExamHistoryEntity`)
-- After changing Freezed / Injectable / Retrofit / JSON models, re-run `build_runner`
