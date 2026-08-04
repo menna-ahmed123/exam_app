@@ -1,8 +1,12 @@
+import 'package:exam_app/config/di/injection.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
 import 'package:exam_app/feature/auth/presentation/auth/auth_cubit.dart';
 import 'package:exam_app/feature/exam/presentation/explore/widgets/explore_view_body.dart';
+import 'package:exam_app/feature/exam/presentation/history/cubit/exam_history_cubit.dart';
+import 'package:exam_app/feature/exam/presentation/history/cubit/exam_history_event.dart';
+import 'package:exam_app/feature/exam/presentation/history/views/exam_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,40 +19,55 @@ class ExploreView extends StatefulWidget {
 
 class ExploreViewState extends State<ExploreView> {
   int currentIndex = 0;
+  late final ExamHistoryCubit historyCubit = getIt<ExamHistoryCubit>();
+
+  @override
+  void dispose() {
+    historyCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPalette.scaffoldGrey,
-      body: SafeArea(child: _tabBody()),
-      bottomNavigationBar: _bottomNav(),
+      body: SafeArea(child: tabBody()),
+      bottomNavigationBar: bottomNav(),
     );
   }
 
-  Widget _tabBody() {
+  Widget tabBody() {
     return IndexedStack(
       index: currentIndex,
-      children: const [
-        ExploreViewBody(),
-        ResultPlaceholder(),
-        ProfilePlaceholder(),
+      children: [
+        const ExploreViewBody(),
+        BlocProvider.value(
+          value: historyCubit,
+          child: const ExamHistoryView(),
+        ),
+        const ProfilePlaceholder(),
       ],
     );
   }
 
-  Widget _bottomNav() {
+  Widget bottomNav() {
     return NavigationBar(
       selectedIndex: currentIndex,
-      onDestinationSelected: (index) {
-        setState(() => currentIndex = index);
-      },
+      onDestinationSelected: onDestinationSelected,
       indicatorColor: AppPalette.lightBlue,
       backgroundColor: AppPalette.white,
-      destinations: _destinations(),
+      destinations: destinations(),
     );
   }
 
-  List<NavigationDestination> _destinations() {
+  void onDestinationSelected(int index) {
+    setState(() => currentIndex = index);
+    if (index == 1) {
+      historyCubit.onEvent(const ExamHistoryEvent.load());
+    }
+  }
+
+  List<NavigationDestination> destinations() {
     return const [
       NavigationDestination(
         icon: Icon(Icons.home_outlined),
@@ -66,20 +85,6 @@ class ExploreViewState extends State<ExploreView> {
         label: AppStrings.profile,
       ),
     ];
-  }
-}
-
-class ResultPlaceholder extends StatelessWidget {
-  const ResultPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        AppStrings.noResultsYet,
-        style: AppTextStyles.styleRegular16(color: AppPalette.grey),
-      ),
-    );
   }
 }
 

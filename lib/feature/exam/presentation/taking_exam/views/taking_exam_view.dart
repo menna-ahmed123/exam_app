@@ -185,6 +185,7 @@ class TakingExamViewState extends State<TakingExamView> {
   void navigateToScore(BuildContext context, TakingExamState state) {
     final result = state.submitState?.data;
     if (!state.shouldNavigateToScore || result == null) return;
+    final history = context.read<TakingExamCubit>().lastSavedHistory;
     context.pushReplacement(
       AppRoutes.examScore,
       extra: ExamScoreArgs(
@@ -197,6 +198,9 @@ class TakingExamViewState extends State<TakingExamView> {
         correct: result.correct,
         wrong: result.wrong,
         percentage: result.percentage,
+        historyId: history?.id ?? '',
+        timeTakenMinutes: history?.timeTakenMinutes ?? 1,
+        reviewQuestions: result.reviewQuestions,
       ),
     );
   }

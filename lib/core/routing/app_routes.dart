@@ -11,4 +11,5 @@ class AppRoutes {
   static const String examInstructions = '/exam-instructions';
   static const String takingExam = '/taking-exam';
   static const String examScore = '/exam-score';
+  static const String examAnswers = '/exam-answers';
 }

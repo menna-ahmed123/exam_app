@@ -66,7 +66,6 @@ class AppStrings {
   static const String profile = 'Profile';
   static const String noSubjectsFound = 'No subjects found';
   static const String noExamsFound = 'No exams found';
-  static const String noResultsYet = 'No results yet';
 
   // ===== Exam instructions =====
   static const String instructions = 'Instructions';
@@ -106,4 +105,11 @@ class AppStrings {
   static const String incorrect = 'Incorrect';
   static const String showResults = 'Show results';
   static const String startAgain = 'Start again';
+
+  // ===== Results / Answers =====
+  static const String results = 'Results';
+  static const String answers = 'Answers';
+  static const String noExamHistory = 'No exam history yet';
+  static const String correctedAnswersIn = 'corrected answers in';
+  static const String min = 'min';
 }
