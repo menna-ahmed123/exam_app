@@ -2,6 +2,7 @@ import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
+import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +150,9 @@ class ExamInstructionsView extends StatelessWidget {
               const Spacer(),
               AppButton(
                 text: AppStrings.start,
-                onPressed: () {},
+                onPressed: () {
+                  context.push(AppRoutes.takingExam, extra: args);
+                },
               ),
               const SizedBox(height: 24),
             ],

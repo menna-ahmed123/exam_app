@@ -81,4 +81,29 @@ class AppStrings {
       'The timer starts once you tap Start.';
   static const String instructionSubmit =
       'Submit your answers before time runs out.';
+
+  // ===== Taking exam =====
+  static const String exam = 'Exam';
+  static const String back = 'Back';
+  static const String next = 'Next';
+  static const String finish = 'Finish';
+  static const String questionOf = 'Question';
+  static const String of = 'of';
+  static const String timeOutTitle = 'Time out !!';
+  static const String viewScore = 'View score';
+  static const String answerAtLeastOne = 'Please answer at least one question.';
+  static const String noQuestionsFound = 'No questions found';
+  static const String exitExamTitle = 'Exit exam?';
+  static const String exitExamMessage =
+      'Your progress will be lost if you leave now.';
+  static const String exit = 'Exit';
+  static const String cancel = 'Cancel';
+
+  // ===== Score =====
+  static const String examScore = 'Exam score';
+  static const String yourScore = 'Your score';
+  static const String correct = 'Correct';
+  static const String incorrect = 'Incorrect';
+  static const String showResults = 'Show results';
+  static const String startAgain = 'Start again';
 }
