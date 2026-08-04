@@ -13,4 +13,6 @@ class ApiConstants {
 
   static const String subjectsEndpoint = 'subjects';
   static const String examsEndpoint = 'exams';
+  static const String questionsEndpoint = 'questions';
+  static const String checkQuestionsEndpoint = 'questions/check';
 }

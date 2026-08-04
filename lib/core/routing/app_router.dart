@@ -8,13 +8,17 @@ import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart'
 import 'package:exam_app/feature/auth/presentation/login/views/login_view.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/views/sign_up_view.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_score_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/subject_entity.dart';
 import 'package:exam_app/feature/exam/presentation/explore/cubit/explore_cubit.dart';
 import 'package:exam_app/feature/exam/presentation/explore/views/explore_view.dart';
 import 'package:exam_app/feature/exam/presentation/instructions/views/exam_instructions_view.dart';
+import 'package:exam_app/feature/exam/presentation/score/views/exam_score_view.dart';
 import 'package:exam_app/feature/exam/presentation/subject_exams/cubit/subject_exams_cubit.dart';
 import 'package:exam_app/feature/exam/presentation/subject_exams/views/subject_exams_view.dart';
+import 'package:exam_app/feature/exam/presentation/taking_exam/cubit/taking_exam_cubit.dart';
+import 'package:exam_app/feature/exam/presentation/taking_exam/views/taking_exam_view.dart';
 import 'package:exam_app/feature/forgot_password/presentation/email_verification/cubit/email_verification_cubit.dart';
 import 'package:exam_app/feature/forgot_password/presentation/email_verification/views/email_verification_view.dart';
 import 'package:exam_app/feature/forgot_password/presentation/forgot_password/cubit/forgot_password_cubit.dart';
@@ -117,6 +121,31 @@ class AppRouter {
               return const InvalidExtraRedirect();
             }
             return ExamInstructionsView(args: args);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.takingExam,
+          name: 'takingExam',
+          builder: (context, state) {
+            final args = state.extra as ExamSessionArgs?;
+            if (args == null) {
+              return const InvalidExtraRedirect();
+            }
+            return BlocProvider(
+              create: (_) => getIt<TakingExamCubit>(),
+              child: TakingExamView(args: args),
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.examScore,
+          name: 'examScore',
+          builder: (context, state) {
+            final args = state.extra as ExamScoreArgs?;
+            if (args == null) {
+              return const InvalidExtraRedirect();
+            }
+            return ExamScoreView(args: args);
           },
         ),
         GoRoute(
