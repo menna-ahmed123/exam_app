@@ -56,4 +56,29 @@ class AppStrings {
   // ===== Home =====
   static const String home = 'Home';
   static const String logout = 'Logout';
+
+  // ===== Explore =====
+  static const String survey = 'Survey';
+  static const String search = 'Search';
+  static const String browseBySubject = 'Browse by subject';
+  static const String explore = 'Explore';
+  static const String result = 'Result';
+  static const String profile = 'Profile';
+  static const String noSubjectsFound = 'No subjects found';
+  static const String noExamsFound = 'No exams found';
+  static const String noResultsYet = 'No results yet';
+
+  // ===== Exam instructions =====
+  static const String instructions = 'Instructions';
+  static const String start = 'Start';
+  static const String minutes = 'Minutes';
+  static const String question = 'Question';
+  static const String instructionStableInternet =
+      'Ensure you have a stable internet connection.';
+  static const String instructionDontLeave =
+      "Don't leave the screen until you finish the exam.";
+  static const String instructionTimer =
+      'The timer starts once you tap Start.';
+  static const String instructionSubmit =
+      'Submit your answers before time runs out.';
 }
