@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:exam_app/core/api/api_constants.dart';
+import 'package:exam_app/core/api/auth_interceptor.dart';
 import 'package:exam_app/feature/auth/api/client/auth_api_client.dart';
 import 'package:exam_app/feature/forgot_password/api/client/forgot_password_api_client.dart';
 import 'package:flutter/foundation.dart';
@@ -16,20 +17,21 @@ BaseOptions createBaseOptions() {
 }
 
 LogInterceptor createDebugLogInterceptor() {
-  return LogInterceptor(
-    requestBody: true,
-    responseBody: true,
-  );
+  return LogInterceptor(requestBody: true, responseBody: true);
 }
 
 @module
 abstract class AppModule {
   @lazySingleton
-  Dio dio() {
+  Dio dio(AuthInterceptor authInterceptor) {
     final client = Dio(createBaseOptions());
+
+    client.interceptors.add(authInterceptor);
+
     if (kDebugMode) {
       client.interceptors.add(createDebugLogInterceptor());
     }
+
     return client;
   }
 
