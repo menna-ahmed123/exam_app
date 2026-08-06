@@ -30,8 +30,9 @@ class _ProfileEditViewState extends State<ProfileEditView> {
   @override
   void initState() {
     super.initState();
-    // بنملى الفورم بالبيانات الحالية من نفس الـ Cubit
+
     final profile = context.read<ProfileViewModel>().state.profileState?.data;
+
     if (profile != null) {
       _usernameController.text = profile.username;
       _firstNameController.text = profile.firstName;
@@ -67,68 +68,85 @@ class _ProfileEditViewState extends State<ProfileEditView> {
     );
   }
 
+  void _listener(BuildContext context, ProfileState state) {
+    final updateState = state.updateProfileState;
+
+    if (updateState == null) return;
+
+    if (!updateState.isLoading &&
+        updateState.errorMessage.isEmpty &&
+        updateState.data != null) {
+      context.pop();
+      return;
+    }
+
+    if (updateState.errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(updateState.errorMessage)));
+    }
+  }
+
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return BlocListener<ProfileViewModel, ProfileState>(
       listenWhen: (previous, current) =>
           previous.updateProfileState != current.updateProfileState,
-      listener: (context, state) {
-        final updateState = state.updateProfileState;
+      listener: _listener,
+      child: Scaffold(body: _buildBody()),
+    );
+  }
 
-        if (updateState == null) return;
+  Widget _buildBody() {
+    return BlocBuilder<ProfileViewModel, ProfileState>(
+      builder: (context, state) {
+        final isLoading = state.updateProfileState?.isLoading ?? false;
 
-        if (!updateState.isLoading &&
-            updateState.errorMessage.isEmpty &&
-            updateState.data != null) {
-         context.pop();
-        }
-
-        if (updateState.errorMessage.isNotEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(updateState.errorMessage)));
-        }
+        return _buildContent(isLoading);
       },
-      child: Scaffold(
-        body: BlocBuilder<ProfileViewModel, ProfileState>(
-          builder: (context, state) {
-            final isLoading = state.updateProfileState?.isLoading ?? false;
-        
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.screenHorizontal,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: AppSpacing.appParSpace),
-                    const AppBackHeader(title: AppStrings.editProfile),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    const Center(child: ProfileAvatar()),
-                     const SizedBox(height: AppSpacing.buttonTopGap),
-                    ProfileForm(
-                      enabled: true,
-                      usernameController: _usernameController,
-                      firstNameController: _firstNameController,
-                      lastNameController: _lastNameController,
-                      emailController: _emailController,
-                      passwordController: _passwordController,
-                      phoneController: _phoneController,
-                    ),
-                    const SizedBox(height: AppSpacing.buttonTopGap),
-                    AppButton(
-                      text: AppStrings.update,
-                      isLoading: isLoading,
-                      onPressed: isLoading ? null : _onUpdatePressed,
-                    ),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                  ],
-                ),
-              ),
-            );
-          },
+    );
+  }
+
+  Widget _buildContent(bool isLoading) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenHorizontal,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: AppSpacing.appParSpace),
+            const AppBackHeader(title: AppStrings.editProfile),
+            const SizedBox(height: AppSpacing.sectionGap),
+            const Center(child: ProfileAvatar()),
+            const SizedBox(height: AppSpacing.buttonTopGap),
+            _buildProfileForm(),
+            const SizedBox(height: AppSpacing.buttonTopGap),
+            _buildUpdateButton(isLoading),
+            const SizedBox(height: AppSpacing.sectionGap),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProfileForm() {
+    return ProfileForm(
+      enabled: true,
+      usernameController: _usernameController,
+      firstNameController: _firstNameController,
+      lastNameController: _lastNameController,
+      emailController: _emailController,
+      passwordController: _passwordController,
+      phoneController: _phoneController,
+    );
+  }
+
+  Widget _buildUpdateButton(bool isLoading) {
+    return AppButton(
+      text: AppStrings.update,
+      isLoading: isLoading,
+      onPressed: isLoading ? null : _onUpdatePressed,
     );
   }
 }

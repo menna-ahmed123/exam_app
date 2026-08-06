@@ -25,8 +25,7 @@ class AppPalette {
   static const Color lightBlue = Color.fromARGB(255, 223, 231, 247);
 
   // Avatar
-  static const Color avatarBackground = Color(0xffE5E5E5);
-
+static const Color avatarBackground = Color.fromARGB(255, 229, 229, 229);
   // Button
   static const Color disabledButton = Color.fromARGB(255, 158, 158, 158);
 }
