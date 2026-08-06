@@ -147,6 +147,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
       text: AppStrings.update,
       isLoading: isLoading,
       onPressed: isLoading ? null : _onUpdatePressed,
+      
     );
   }
 }
