@@ -7,4 +7,7 @@ class AppRoutes {
   static const String emailVerification = '/verification';
   static const String resetPassword = '/reset-password';
   static const String home = '/home';
+    static const String profile = '/profile';
+  static const String profileEdit = '/profile/edit';
+
 }

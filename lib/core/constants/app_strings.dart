@@ -1,4 +1,4 @@
-/// All UI strings extracted from Login / Sign up / Forgot password / Reset password screens
+/// All UI strings extracted from the app
 class AppStrings {
   AppStrings._();
 
@@ -56,4 +56,10 @@ class AppStrings {
   // ===== Home =====
   static const String home = 'Home';
   static const String logout = 'Logout';
+
+  // ===== Profile =====
+  static const String profile = 'Profile';
+  static const String update = 'Update';
+   static const String editProfile= "Edit Profile";
+   static const String changePassword = "Change";
 }
