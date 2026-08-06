@@ -15,10 +15,10 @@ class ProfileViewBody extends StatefulWidget {
   const ProfileViewBody({super.key});
 
   @override
-  State<ProfileViewBody> createState() => _ProfileViewBodyState();
+  State<ProfileViewBody> createState() => ProfileViewBodyState();
 }
 
-class _ProfileViewBodyState extends State<ProfileViewBody> {
+class ProfileViewBodyState extends State<ProfileViewBody> {
   final _usernameController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();

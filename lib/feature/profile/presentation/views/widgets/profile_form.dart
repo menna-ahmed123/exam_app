@@ -30,60 +30,77 @@ class ProfileForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppTextField(
-          controller: usernameController,
-          label: AppStrings.userName,
-          hint: '',
-          enabled: enabled,
-        ),
-
+        _buildUsernameField(),
         const SizedBox(height: AppSpacing.fieldGap),
-
-        SideBySideFields(
-          leftLabel: AppStrings.firstName,
-          leftHint: '',
-          rightLabel: AppStrings.lastName,
-          rightHint: '',
-          leftController: firstNameController,
-          rightController: lastNameController,
-        ),
-
+        _buildNameFields(),
         const SizedBox(height: AppSpacing.fieldGap),
-
-        AppTextField(
-          controller: emailController,
-          label: AppStrings.email,
-          hint: '',
-          enabled: enabled,
-        ),
-
+        _buildEmailField(),
         const SizedBox(height: AppSpacing.fieldGap),
-
-        AppTextField(
-          controller: passwordController,
-          label: AppStrings.password,
-          hint: '',
-          enabled: enabled,
-          obscureText: true,
-          suffix: TextButton(
-            onPressed: () {
-          
-            },
-            child: Text(AppStrings.changePassword,
-              style: AppTextStyles.styleRegular13(color: Theme.of(context).primaryColor),
-            ),
-          ),
-        ),
-
+        _buildPasswordField(context),
         const SizedBox(height: AppSpacing.fieldGap),
-
-        AppTextField(
-          controller: phoneController,
-          label: AppStrings.phoneNumber,
-          hint: '',
-          enabled: enabled,
-        ),
+        _buildPhoneField(),
       ],
+    );
+  }
+
+  Widget _buildUsernameField() {
+    return AppTextField(
+      controller: usernameController,
+      label: AppStrings.userName,
+      hint: '',
+      enabled: enabled,
+    );
+  }
+
+  Widget _buildNameFields() {
+    return SideBySideFields(
+      leftLabel: AppStrings.firstName,
+      leftHint: '',
+      rightLabel: AppStrings.lastName,
+      rightHint: '',
+      leftController: firstNameController,
+      rightController: lastNameController,
+    );
+  }
+
+  Widget _buildEmailField() {
+    return AppTextField(
+      controller: emailController,
+      label: AppStrings.email,
+      hint: '',
+      enabled: enabled,
+    );
+  }
+
+  Widget _buildPasswordField(BuildContext context) {
+    return AppTextField(
+      controller: passwordController,
+      label: AppStrings.password,
+      hint: '',
+      enabled: enabled,
+      obscureText: true,
+      suffix: _buildChangePasswordButton(context),
+    );
+  }
+
+  Widget _buildChangePasswordButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {},
+      child: Text(
+        AppStrings.changePassword,
+        style: AppTextStyles.styleRegular13(
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return AppTextField(
+      controller: phoneController,
+      label: AppStrings.phoneNumber,
+      hint: '',
+      enabled: enabled,
     );
   }
 }
