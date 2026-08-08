@@ -1,9 +1,13 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
+import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/widgets/side_by_side_fields.dart';
+import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileForm extends StatelessWidget {
   const ProfileForm({
@@ -85,7 +89,12 @@ class ProfileForm extends StatelessWidget {
 
   Widget _buildChangePasswordButton(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        context.push(
+          AppRoutes.profileChangePassword,
+          extra: context.read<ProfileViewModel>(),
+        );
+      },
       child: Text(
         AppStrings.changePassword,
         style: AppTextStyles.styleRegular13(

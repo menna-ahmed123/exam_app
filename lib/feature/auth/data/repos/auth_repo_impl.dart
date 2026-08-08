@@ -1,6 +1,6 @@
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/storage/secure_storage_service.dart';
-import 'package:exam_app/core/storage/storage_keys.dart';
+import 'package:exam_app/core/utils/token_helper.dart';
 import 'package:exam_app/feature/auth/data/data_sources/remote/auth_remote_data_source.dart';
 import 'package:exam_app/feature/auth/data/models/auth_response_model.dart';
 import 'package:exam_app/feature/auth/domain/entities/auth_response_entity.dart';
@@ -31,8 +31,9 @@ class AuthRepoImpl implements AuthRepo {
     switch (response) {
       case SuccessResponse<AuthResponseModel>():
         final entity = response.data.toDomain();
-        await _writeToken(entity);
+        await saveToken(secureStorageService, entity.token);
         return SuccessResponse<AuthResponseEntity>(entity);
+
       case ErrorResponse<AuthResponseModel>():
         return ErrorResponse<AuthResponseEntity>(
           errorMessage: response.errorMessage,
@@ -51,19 +52,13 @@ class AuthRepoImpl implements AuthRepo {
     switch (response) {
       case SuccessResponse<AuthResponseModel>():
         final entity = response.data.toDomain();
-        await _writeToken(entity);
+        await saveToken(secureStorageService, entity.token);
         return SuccessResponse(entity);
+
       case ErrorResponse<AuthResponseModel>():
         return ErrorResponse<AuthResponseEntity>(
           errorMessage: response.errorMessage,
         );
     }
-  }
-
-  Future<void> _writeToken(AuthResponseEntity entity) async {
-    await secureStorageService.write(
-      key: StorageKeys.accessToken,
-      value: entity.token,
-    );
   }
 }

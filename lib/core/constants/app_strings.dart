@@ -52,6 +52,8 @@ class AppStrings {
   static const String newPassword = 'New password';
   static const String passwordResetSuccess =
       'Password reset successfully. Please login.';
+  static const String currentPassword =
+      'Current password';    
 
   // ===== Home =====
   static const String home = 'Home';
@@ -61,5 +63,6 @@ class AppStrings {
   static const String profile = 'Profile';
   static const String update = 'Update';
    static const String editProfile= "Edit Profile";
-   static const String changePassword = "Change";
+   static const String changePassword = "Change Password";
+   
 }

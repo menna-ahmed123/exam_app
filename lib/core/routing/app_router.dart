@@ -15,6 +15,7 @@ import 'package:exam_app/feature/forgot_password/presentation/reset_password/cub
 import 'package:exam_app/feature/forgot_password/presentation/reset_password/views/reset_password_view.dart';
 import 'package:exam_app/feature/home/presentation/views/home_view.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
+import 'package:exam_app/feature/profile/presentation/views/profile_change_password_view.dart';
 import 'package:exam_app/feature/profile/presentation/views/profile_edit_view.dart';
 import 'package:exam_app/feature/profile/presentation/views/profile_view.dart';
 import 'package:flutter/widgets.dart';
@@ -134,6 +135,18 @@ class AppRouter {
         return BlocProvider.value(
           value: viewModel,
           child: const ProfileEditView(),
+        );
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.profileChangePassword,
+      name: 'profileChangePassword',
+      builder: (context, state) {
+        final viewModel = state.extra as ProfileViewModel;
+
+        return BlocProvider.value(
+          value: viewModel,
+          child: const ProfileChangePassword(),
         );
       },
     ),
