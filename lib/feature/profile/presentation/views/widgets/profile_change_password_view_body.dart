@@ -19,10 +19,10 @@ class ProfileChangePasswordViewBody extends StatefulWidget {
 
   @override
   State<ProfileChangePasswordViewBody> createState() =>
-      _ProfileChangePasswordViewBodyState();
+      ProfileChangePasswordViewBodyState();
 }
 
-class _ProfileChangePasswordViewBodyState
+class ProfileChangePasswordViewBodyState
     extends State<ProfileChangePasswordViewBody> {
   final _formKey = GlobalKey<FormState>();
 
@@ -87,63 +87,82 @@ class _ProfileChangePasswordViewBodyState
     return BlocConsumer<ProfileViewModel, ProfileState>(
       listener: _listener,
       builder: (context, state) {
-        final isLoading = state.changePasswordState.isLoading;
-
-        return Scaffold(
-          body: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.screenHorizontal,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppSpacing.appParSpace),
-                  const AppBackHeader(title: AppStrings.changePassword),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  AppTextField(
-                    controller: _currentPasswordController,
-                    label: AppStrings.currentPassword,
-                    hint: AppStrings.currentPassword,
-                    obscureText: true,
-                    validator: Validators.password,
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: AppSpacing.fieldGap),
-                  AppTextField(
-                    controller: _newPasswordController,
-                    label: AppStrings.newPassword,
-                    hint: AppStrings.newPassword,
-                    obscureText: true,
-                    validator: Validators.password,
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: AppSpacing.fieldGap),
-                  AppTextField(
-                    controller: _confirmPasswordController,
-                    label: AppStrings.confirmPassword,
-                    hint: AppStrings.confirmPassword,
-                    obscureText: true,
-                    validator: (value) {
-                      return Validators.confirmPassword(
-                        value,
-                        _newPasswordController.text,
-                      );
-                    },
-                    textInputAction: TextInputAction.done,
-                  ),
-                  const SizedBox(height: AppSpacing.buttonTopGap),
-                  AppButton(
-                    text: isLoading ? AppStrings.updating : AppStrings.update,
-                    onPressed: isLoading ? null : _onUpdatePressed,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        return _buildScaffold(state.changePasswordState.isLoading);
       },
+    );
+  }
+
+  Widget _buildScaffold(bool isLoading) {
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenHorizontal,
+          ),
+          child: _buildContent(isLoading),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(bool isLoading) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.appParSpace),
+        const AppBackHeader(title: AppStrings.changePassword),
+        const SizedBox(height: AppSpacing.sectionGap),
+        _buildCurrentPasswordField(),
+        const SizedBox(height: AppSpacing.fieldGap),
+        _buildNewPasswordField(),
+        const SizedBox(height: AppSpacing.fieldGap),
+        _buildConfirmPasswordField(),
+        const SizedBox(height: AppSpacing.buttonTopGap),
+        _buildUpdateButton(isLoading),
+      ],
+    );
+  }
+
+  Widget _buildCurrentPasswordField() {
+    return AppTextField(
+      controller: _currentPasswordController,
+      label: AppStrings.currentPassword,
+      hint: AppStrings.currentPassword,
+      obscureText: true,
+      validator: Validators.password,
+      textInputAction: TextInputAction.next,
+    );
+  }
+
+  Widget _buildNewPasswordField() {
+    return AppTextField(
+      controller: _newPasswordController,
+      label: AppStrings.newPassword,
+      hint: AppStrings.newPassword,
+      obscureText: true,
+      validator: Validators.password,
+      textInputAction: TextInputAction.next,
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return AppTextField(
+      controller: _confirmPasswordController,
+      label: AppStrings.confirmPassword,
+      hint: AppStrings.confirmPassword,
+      obscureText: true,
+      validator: (value) {
+        return Validators.confirmPassword(value, _newPasswordController.text);
+      },
+      textInputAction: TextInputAction.done,
+    );
+  }
+
+  Widget _buildUpdateButton(bool isLoading) {
+    return AppButton(
+      text: isLoading ? AppStrings.updating : AppStrings.update,
+      onPressed: isLoading ? null : _onUpdatePressed,
     );
   }
 }

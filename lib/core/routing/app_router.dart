@@ -49,23 +49,35 @@ class AppRouter {
     final authStatus = authCubit.state.status;
     final location = state.matchedLocation;
 
-    if (authStatus == AuthStatus.unknown) {
+    if (_isUnknownStatus(authStatus)) {
       return null;
     }
 
-    final isLoggedIn = authStatus == AuthStatus.authenticated;
-
-    final isAuthFlow = isAuthFlowLocation(location);
-
-    if (!isLoggedIn && !isAuthFlow) {
+    if (_shouldRedirectToLogin(authStatus, location)) {
       return AppRoutes.login;
     }
 
-    if (isLoggedIn && isLoginOrSignUp(location)) {
+    if (_shouldRedirectToHome(authStatus, location)) {
       return AppRoutes.home;
     }
 
     return null;
+  }
+
+  bool _isUnknownStatus(AuthStatus status) {
+    return status == AuthStatus.unknown;
+  }
+
+  bool _shouldRedirectToLogin(AuthStatus status, String location) {
+    final isLoggedIn = status == AuthStatus.authenticated;
+
+    return !isLoggedIn && !isAuthFlowLocation(location);
+  }
+
+  bool _shouldRedirectToHome(AuthStatus status, String location) {
+    final isLoggedIn = status == AuthStatus.authenticated;
+
+    return isLoggedIn && isLoginOrSignUp(location);
   }
 
   bool isAuthFlowLocation(String location) {

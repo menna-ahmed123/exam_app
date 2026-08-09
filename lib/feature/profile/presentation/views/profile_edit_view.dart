@@ -1,5 +1,6 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
+import 'package:exam_app/core/resources/app_palette.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
@@ -76,7 +77,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
       buildSnackBar(
         context: context,
         message: updateState.errorMessage,
-        backgroundColor: Colors.red,
+        backgroundColor: AppPalette.error,
       );
 
       return;
