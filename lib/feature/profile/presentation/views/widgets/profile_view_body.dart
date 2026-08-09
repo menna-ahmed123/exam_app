@@ -1,8 +1,10 @@
+
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
+import 'package:exam_app/feature/profile/presentation/view_model/profile_event.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
 import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avater.dart';
@@ -27,6 +29,12 @@ class ProfileViewBodyState extends State<ProfileViewBody> {
   final _phoneController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ProfileViewModel>().doEvent(GetProfileEvent());
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _firstNameController.dispose();
@@ -38,7 +46,7 @@ class ProfileViewBodyState extends State<ProfileViewBody> {
   }
 
   void _listener(BuildContext context, ProfileState state) {
-    final profile = state.profileState?.data;
+    final profile = state.profileState.data;
 
     if (profile == null) return;
 
@@ -54,17 +62,25 @@ class ProfileViewBodyState extends State<ProfileViewBody> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileViewModel, ProfileState>(
       listener: _listener,
+      buildWhen: (previous, current) =>
+          previous.profileState != current.profileState,
       builder: (context, state) => _buildBody(state),
     );
   }
 
   Widget _buildBody(ProfileState state) {
-    if (state.profileState?.isLoading ?? false) {
-      return const Center(child: CircularProgressIndicator());
+    if (state.profileState.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
-    if ((state.profileState?.errorMessage ?? '').isNotEmpty) {
-      return Center(child: Text(state.profileState!.errorMessage));
+    final errorMessage = state.profileState.errorMessage;
+
+    if (errorMessage.isNotEmpty) {
+      return Center(
+        child: Text(errorMessage),
+      );
     }
 
     return _buildContent(context);
@@ -109,10 +125,7 @@ class ProfileViewBodyState extends State<ProfileViewBody> {
     return AppButton(
       text: AppStrings.update,
       onPressed: () {
-        context.push(
-          AppRoutes.profileEdit,
-          extra: context.read<ProfileViewModel>(),
-        );
+        context.push(AppRoutes.profileEdit);
       },
     );
   }

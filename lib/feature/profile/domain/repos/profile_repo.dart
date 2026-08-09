@@ -4,7 +4,7 @@ import 'package:exam_app/feature/profile/domain/entities/change_password_params.
 import 'package:exam_app/feature/profile/domain/entities/profile_entity.dart';
 import 'package:exam_app/feature/profile/domain/entities/update_profile_params.dart';
 
-abstract class ProfileRepo {
+abstract interface class ProfileRepo {
   Future<BaseResponse<ProfileEntity>> getProfile();
 
   Future<BaseResponse<ProfileEntity>> updateProfile({

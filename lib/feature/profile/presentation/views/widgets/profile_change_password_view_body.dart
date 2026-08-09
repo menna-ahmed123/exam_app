@@ -1,5 +1,7 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
+import 'package:exam_app/core/resources/app_palette.dart';
+import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
@@ -55,21 +57,25 @@ class _ProfileChangePasswordViewBodyState
   void _listener(BuildContext context, ProfileState state) {
     final changePasswordState = state.changePasswordState;
 
-    if (changePasswordState?.isLoading ?? false) {
+    if (changePasswordState.isLoading) {
       return;
     }
 
-    if ((changePasswordState?.errorMessage ?? '').isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(changePasswordState!.errorMessage)),
+    if (changePasswordState.errorMessage.isNotEmpty) {
+      buildSnackBar(
+        context: context,
+        message: changePasswordState.errorMessage,
+        backgroundColor: AppPalette.error,
       );
 
       return;
     }
 
-    if (changePasswordState?.data != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password changed successfully')),
+    if (changePasswordState.data != null) {
+      buildSnackBar(
+        context: context,
+        message: AppStrings.passwordChangedSuccessfully,
+        backgroundColor: AppPalette.primaryBlue,
       );
 
       context.pop();
@@ -81,7 +87,7 @@ class _ProfileChangePasswordViewBodyState
     return BlocConsumer<ProfileViewModel, ProfileState>(
       listener: _listener,
       builder: (context, state) {
-        final isLoading = state.changePasswordState?.isLoading ?? false;
+        final isLoading = state.changePasswordState.isLoading;
 
         return Scaffold(
           body: Form(
@@ -94,7 +100,7 @@ class _ProfileChangePasswordViewBodyState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppSpacing.appParSpace),
-                  const AppBackHeader(title: AppStrings.resetPassword),
+                  const AppBackHeader(title: AppStrings.changePassword),
                   const SizedBox(height: AppSpacing.sectionGap),
                   AppTextField(
                     controller: _currentPasswordController,
@@ -129,8 +135,8 @@ class _ProfileChangePasswordViewBodyState
                   ),
                   const SizedBox(height: AppSpacing.buttonTopGap),
                   AppButton(
-                    text: isLoading ? 'Updating...' : AppStrings.update,
-                    onPressed: isLoading ? () {} : _onUpdatePressed,
+                    text: isLoading ? AppStrings.updating : AppStrings.update,
+                    onPressed: isLoading ? null : _onUpdatePressed,
                   ),
                 ],
               ),

@@ -7,7 +7,7 @@ import 'package:exam_app/feature/profile/data/models/profile_response_model.dart
 import 'package:exam_app/feature/profile/data/models/update_profile_request_model.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ProfileRemoteDataSource)
+@Injectable(as: ProfileRemoteDataSource)
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ProfileApiClient profileApiClient;
 

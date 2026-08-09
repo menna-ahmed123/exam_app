@@ -6,8 +6,6 @@ class ProfileChangePassword extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const ProfileChangePasswordViewBody(),
-    );
+    return Scaffold(body: const ProfileChangePasswordViewBody());
   }
 }

@@ -8,9 +8,9 @@ part 'profile_state.freezed.dart';
 @freezed
 abstract class ProfileState with _$ProfileState {
   const factory ProfileState({
-    BaseState<ProfileEntity>? profileState,
-    BaseState<ProfileEntity>? updateProfileState,
-    BaseState<ChangePasswordEntity>? changePasswordState,
+    BaseState<ProfileEntity> profileState,
+    BaseState<ProfileEntity> updateProfileState,
+    BaseState<ChangePasswordEntity> changePasswordState,
   }) = _ProfileState;
 
   factory ProfileState.initial() {

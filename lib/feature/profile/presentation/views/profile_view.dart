@@ -6,8 +6,6 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ProfileViewBody(),
-    );
+    return const Scaffold(body: ProfileViewBody());
   }
 }

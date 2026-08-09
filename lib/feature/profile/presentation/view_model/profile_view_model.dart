@@ -42,7 +42,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
   Future<void> _getProfile() async {
     emit(
       state.copyWith(
-        profileState: state.profileState?.copyWith(
+        profileState: state.profileState.copyWith(
           isLoading: true,
           errorMessage: '',
         ),
@@ -55,7 +55,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case SuccessResponse<ProfileEntity>():
         emit(
           state.copyWith(
-            profileState: state.profileState?.copyWith(
+            profileState: state.profileState.copyWith(
               isLoading: false,
               data: response.data,
             ),
@@ -66,7 +66,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case ErrorResponse<ProfileEntity>():
         emit(
           state.copyWith(
-            profileState: state.profileState?.copyWith(
+            profileState: state.profileState.copyWith(
               isLoading: false,
               errorMessage: response.errorMessage,
             ),
@@ -79,7 +79,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
   Future<void> _updateProfile(UpdateProfileParams params) async {
     emit(
       state.copyWith(
-        updateProfileState: state.updateProfileState?.copyWith(
+        updateProfileState: state.updateProfileState.copyWith(
           isLoading: true,
           errorMessage: '',
         ),
@@ -94,11 +94,11 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case SuccessResponse<ProfileEntity>():
         emit(
           state.copyWith(
-            profileState: state.profileState?.copyWith(
+            profileState: state.profileState.copyWith(
               data: response.data,
               errorMessage: '',
             ),
-            updateProfileState: state.updateProfileState?.copyWith(
+            updateProfileState: state.updateProfileState.copyWith(
               isLoading: false,
               data: response.data,
               errorMessage: '',
@@ -110,7 +110,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case ErrorResponse<ProfileEntity>():
         emit(
           state.copyWith(
-            updateProfileState: state.updateProfileState?.copyWith(
+            updateProfileState: state.updateProfileState.copyWith(
               isLoading: false,
               errorMessage: response.errorMessage,
             ),
@@ -123,7 +123,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
   Future<void> _changePassword(ChangePasswordParams params) async {
     emit(
       state.copyWith(
-        changePasswordState: state.changePasswordState?.copyWith(
+        changePasswordState: state.changePasswordState.copyWith(
           isLoading: true,
           errorMessage: '',
         ),
@@ -137,7 +137,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case SuccessResponse<ChangePasswordEntity>():
         emit(
           state.copyWith(
-            changePasswordState: state.changePasswordState?.copyWith(
+            changePasswordState: state.changePasswordState.copyWith(
               isLoading: false,
               data: response.data,
               errorMessage: '',
@@ -149,7 +149,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
       case ErrorResponse<ChangePasswordEntity>():
         emit(
           state.copyWith(
-            changePasswordState: state.changePasswordState?.copyWith(
+            changePasswordState: state.changePasswordState.copyWith(
               isLoading: false,
               errorMessage: response.errorMessage,
             ),

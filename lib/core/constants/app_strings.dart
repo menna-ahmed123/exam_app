@@ -58,11 +58,15 @@ class AppStrings {
   // ===== Home =====
   static const String home = 'Home';
   static const String logout = 'Logout';
+  static const String explore = 'Explore';
+  static const String result = 'Result';
 
   // ===== Profile =====
   static const String profile = 'Profile';
   static const String update = 'Update';
-   static const String editProfile= "Edit Profile";
-   static const String changePassword = "Change Password";
+   static const String editProfile = 'Edit Profile';
+   static const String changePassword = 'Change Password';
+   static const String passwordChangedSuccessfully = 'Password changed successfully';
+   static const String updating = 'Updating...';
    
 }

@@ -13,7 +13,7 @@ import 'package:exam_app/feature/profile/domain/entities/update_profile_params.d
 import 'package:exam_app/feature/profile/domain/repos/profile_repo.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ProfileRepo)
+@Injectable(as: ProfileRepo)
 class ProfileRepoImpl implements ProfileRepo {
   ProfileRepoImpl({
     required this.profileRemoteDataSource,

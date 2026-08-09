@@ -1,7 +1,9 @@
+
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
 import 'package:exam_app/core/routing/app_routes.dart';
+import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/widgets/side_by_side_fields.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
@@ -53,17 +55,21 @@ class ProfileForm extends StatelessWidget {
       label: AppStrings.userName,
       hint: '',
       enabled: enabled,
+      validator: Validators.userName,
     );
   }
 
   Widget _buildNameFields() {
     return SideBySideFields(
+       enabled: enabled,
       leftLabel: AppStrings.firstName,
       leftHint: '',
       rightLabel: AppStrings.lastName,
       rightHint: '',
       leftController: firstNameController,
       rightController: lastNameController,
+      leftValidator: Validators.name,
+      rightValidator: Validators.name,
     );
   }
 
@@ -73,6 +79,7 @@ class ProfileForm extends StatelessWidget {
       label: AppStrings.email,
       hint: '',
       enabled: enabled,
+      validator: Validators.email,
     );
   }
 
@@ -83,6 +90,7 @@ class ProfileForm extends StatelessWidget {
       hint: '',
       enabled: enabled,
       obscureText: true,
+      validator: Validators.password,
       suffix: _buildChangePasswordButton(context),
     );
   }
@@ -110,6 +118,8 @@ class ProfileForm extends StatelessWidget {
       label: AppStrings.phoneNumber,
       hint: '',
       enabled: enabled,
+      validator: Validators.phone,
     );
   }
 }
+

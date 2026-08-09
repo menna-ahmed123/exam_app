@@ -3,7 +3,7 @@ import 'package:exam_app/feature/profile/domain/entities/profile_entity.dart';
 import 'package:exam_app/feature/profile/domain/repos/profile_repo.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@Injectable()
 class GetProfileUseCase {
   final ProfileRepo profileRepo;
 

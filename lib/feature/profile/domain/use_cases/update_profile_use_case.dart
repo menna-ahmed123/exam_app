@@ -4,7 +4,7 @@ import 'package:exam_app/feature/profile/domain/entities/update_profile_params.d
 import 'package:exam_app/feature/profile/domain/repos/profile_repo.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@Injectable()
 class UpdateProfileUseCase {
   final ProfileRepo profileRepo;
 

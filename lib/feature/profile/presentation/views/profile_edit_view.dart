@@ -2,6 +2,7 @@ import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
+import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/feature/profile/domain/entities/update_profile_params.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_event.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_state.dart';
@@ -31,7 +32,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
   void initState() {
     super.initState();
 
-    final profile = context.read<ProfileViewModel>().state.profileState?.data;
+    final profile = context.read<ProfileViewModel>().state.profileState.data;
 
     if (profile != null) {
       _usernameController.text = profile.username;
@@ -71,19 +72,18 @@ class ProfileEditViewState extends State<ProfileEditView> {
   void _listener(BuildContext context, ProfileState state) {
     final updateState = state.updateProfileState;
 
-    if (updateState == null) return;
+    if (updateState.errorMessage.isNotEmpty) {
+      buildSnackBar(
+        context: context,
+        message: updateState.errorMessage,
+        backgroundColor: Colors.red,
+      );
 
-    if (!updateState.isLoading &&
-        updateState.errorMessage.isEmpty &&
-        updateState.data != null) {
-      context.pop();
       return;
     }
 
-    if (updateState.errorMessage.isNotEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(updateState.errorMessage)));
+    if (!updateState.isLoading && updateState.data != null) {
+      context.pop();
     }
   }
 
@@ -100,7 +100,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
   Widget _buildBody() {
     return BlocBuilder<ProfileViewModel, ProfileState>(
       builder: (context, state) {
-        final isLoading = state.updateProfileState?.isLoading ?? false;
+        final isLoading = state.updateProfileState.isLoading;
 
         return _buildContent(isLoading);
       },
@@ -147,7 +147,6 @@ class ProfileEditViewState extends State<ProfileEditView> {
       text: AppStrings.update,
       isLoading: isLoading,
       onPressed: isLoading ? null : _onUpdatePressed,
-      
     );
   }
 }
