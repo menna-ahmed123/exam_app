@@ -12,7 +12,7 @@ class ProfileAvatar extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Container(
         width: 90,

@@ -60,7 +60,11 @@ class AppStrings {
   static const String logout = 'Logout';
   static const String explore = 'Explore';
   static const String result = 'Result';
-
+  static const String search = 'Search';
+  static const String browseBySubject = 'Browse by subject';
+  static const String noSubjectsFound = 'No subjects found';
+  static const String subjectDetails = 'Subject details';
+  static const String createdAt = 'Created at';
   // ===== Profile =====
   static const String profile = 'Profile';
   static const String update = 'Update';

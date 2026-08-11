@@ -13,5 +13,7 @@ class ApiConstants {
   static const String profileDataEndpoint = 'auth/profileData';
   static const String updateProfileEndpoint = 'auth/editProfile';
   static const String changePasswordEndpoint = 'auth/changePassword';
+  static const String subjectsEndpoint = 'subjects';
+  static const String subjectDetailsEndpoint = 'subjects/{subjectId}';
  
 }

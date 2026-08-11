@@ -5,8 +5,8 @@ part 'change_password_response_model.g.dart';
 
 @JsonSerializable()
 class ChangePasswordResponseModel {
-  final String message;
-  final String token;
+  final String? message;
+  final String? token;
 
   ChangePasswordResponseModel({required this.message, required this.token});
 

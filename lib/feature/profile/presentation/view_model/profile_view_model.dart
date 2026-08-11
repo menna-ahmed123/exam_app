@@ -97,6 +97,7 @@ class ProfileViewModel extends Cubit<ProfileState> {
             profileState: state.profileState.copyWith(
               data: response.data,
               errorMessage: '',
+               isLoading: false,
             ),
             updateProfileState: state.updateProfileState.copyWith(
               isLoading: false,

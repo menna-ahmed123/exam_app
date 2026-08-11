@@ -4,6 +4,6 @@ part 'change_password_entity.freezed.dart';
 
 @freezed
 abstract class ChangePasswordEntity with _$ChangePasswordEntity {
-  const factory ChangePasswordEntity({required String token}) =
+  const factory ChangePasswordEntity({required String? token}) =
       _ChangePasswordEntity;
 }

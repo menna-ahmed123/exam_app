@@ -1,13 +1,12 @@
-
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
-import 'package:exam_app/core/routing/app_routes.dart';
+import 'package:exam_app/app/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_event.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
-import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avater.dart';
+import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avatar.dart';
 import 'package:exam_app/feature/profile/presentation/views/widgets/profile_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -125,7 +124,7 @@ class ProfileViewBodyState extends State<ProfileViewBody> {
     return AppButton(
       text: AppStrings.update,
       onPressed: () {
-        context.push(AppRoutes.profileEdit);
+        context.pushNamed(AppRoutes.profileEdit);
       },
     );
   }

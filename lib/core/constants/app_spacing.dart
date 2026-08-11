@@ -5,4 +5,5 @@ class AppSpacing {
   static const double fieldGap = 16;
   static const double sectionGap = 24;
   static const double buttonTopGap = 32;
+  static const double subjectIconSize = 40;
 }

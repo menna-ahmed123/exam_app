@@ -1,3 +1,4 @@
+import 'package:exam_app/feature/home/presentation/views/widgets/explore_view_body.dart';
 import 'package:flutter/material.dart';
 
 class ExploreView extends StatelessWidget {
@@ -5,6 +6,6 @@ class ExploreView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    return const Scaffold(body: ExploreViewBody());
   }
 }

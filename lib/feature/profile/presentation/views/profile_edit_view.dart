@@ -1,14 +1,16 @@
+import 'package:exam_app/app/routing/app_routes.dart';
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_palette.dart';
+import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
-import 'package:exam_app/core/utils/build_snack_bar.dart';
+import 'package:exam_app/feature/profile/domain/entities/profile_entity.dart';
 import 'package:exam_app/feature/profile/domain/entities/update_profile_params.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_event.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
-import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avater.dart';
+import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avatar.dart';
 import 'package:exam_app/feature/profile/presentation/views/widgets/profile_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,16 +35,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
   void initState() {
     super.initState();
 
-    final profile = context.read<ProfileViewModel>().state.profileState.data;
-
-    if (profile != null) {
-      _usernameController.text = profile.username;
-      _firstNameController.text = profile.firstName;
-      _lastNameController.text = profile.lastName;
-      _emailController.text = profile.email;
-      _phoneController.text = profile.phone;
-      _passwordController.text = '********';
-    }
+    context.read<ProfileViewModel>().doEvent(GetProfileEvent());
   }
 
   @override
@@ -54,6 +47,19 @@ class ProfileEditViewState extends State<ProfileEditView> {
     _passwordController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  void _populateControllers(ProfileEntity profile) {
+    _usernameController.text = profile.username;
+    _firstNameController.text = profile.firstName;
+    _lastNameController.text = profile.lastName;
+    _emailController.text = profile.email;
+    _phoneController.text = profile.phone;
+    _passwordController.text = '********';
+  }
+
+  void _onChangePasswordPressed() {
+    context.pushNamed(AppRoutes.profileChangePassword);
   }
 
   void _onUpdatePressed() {
@@ -71,6 +77,12 @@ class ProfileEditViewState extends State<ProfileEditView> {
   }
 
   void _listener(BuildContext context, ProfileState state) {
+    final profile = state.profileState.data;
+
+    if (profile != null) {
+      _populateControllers(profile);
+    }
+
     final updateState = state.updateProfileState;
 
     if (updateState.errorMessage.isNotEmpty) {
@@ -90,22 +102,27 @@ class ProfileEditViewState extends State<ProfileEditView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileViewModel, ProfileState>(
+    return BlocConsumer<ProfileViewModel, ProfileState>(
       listenWhen: (previous, current) =>
+          previous.profileState != current.profileState ||
           previous.updateProfileState != current.updateProfileState,
       listener: _listener,
-      child: Scaffold(body: _buildBody()),
+      builder: (context, state) {
+        return Scaffold(body: _buildBody(state));
+      },
     );
   }
 
-  Widget _buildBody() {
-    return BlocBuilder<ProfileViewModel, ProfileState>(
-      builder: (context, state) {
-        final isLoading = state.updateProfileState.isLoading;
+  Widget _buildBody(ProfileState state) {
+    if (state.profileState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-        return _buildContent(isLoading);
-      },
-    );
+    if (state.profileState.errorMessage.isNotEmpty) {
+      return Center(child: Text(state.profileState.errorMessage));
+    }
+
+    return _buildContent(state.updateProfileState.isLoading);
   }
 
   Widget _buildContent(bool isLoading) {
@@ -140,6 +157,7 @@ class ProfileEditViewState extends State<ProfileEditView> {
       emailController: _emailController,
       passwordController: _passwordController,
       phoneController: _phoneController,
+      onChangePasswordPressed: _onChangePasswordPressed,
     );
   }
 

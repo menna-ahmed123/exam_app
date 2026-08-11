@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/feature/profile/api/client/profile_api_client.dart';
 import 'package:exam_app/feature/profile/data/data_sources/remote/profile_remote_data_source.dart';
@@ -16,10 +17,15 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<BaseResponse<ProfileResponseModel>> getProfile() async {
     try {
-      final ProfileResponseModel profileResponseModel = await profileApiClient
-          .getProfile();
+      final profileResponseModel = await profileApiClient.getProfile();
 
       return SuccessResponse<ProfileResponseModel>(profileResponseModel);
+    } on DioException catch (e) {
+      return ErrorResponse<ProfileResponseModel>(
+        error: Exception(
+          e.response?.data?['message'] ?? e.message ?? 'An error occurred',
+        ),
+      );
     } on Exception catch (e) {
       return ErrorResponse<ProfileResponseModel>(error: e);
     }
@@ -30,10 +36,17 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required UpdateProfileRequestModel body,
   }) async {
     try {
-      final ProfileResponseModel profileResponseModel = await profileApiClient
-          .updateProfile(body: body);
+      final profileResponseModel = await profileApiClient.updateProfile(
+        body: body,
+      );
 
       return SuccessResponse<ProfileResponseModel>(profileResponseModel);
+    } on DioException catch (e) {
+      return ErrorResponse<ProfileResponseModel>(
+        error: Exception(
+          e.response?.data?['message'] ?? e.message ?? 'An error occurred',
+        ),
+      );
     } on Exception catch (e) {
       return ErrorResponse<ProfileResponseModel>(error: e);
     }
@@ -44,11 +57,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required ChangePasswordRequestModel body,
   }) async {
     try {
-      final ChangePasswordResponseModel changePasswordResponseModel =
-          await profileApiClient.changePassword(body: body);
+      final changePasswordResponseModel = await profileApiClient.changePassword(
+        body: body,
+      );
 
       return SuccessResponse<ChangePasswordResponseModel>(
         changePasswordResponseModel,
+      );
+    } on DioException catch (e) {
+      return ErrorResponse<ChangePasswordResponseModel>(
+        error: Exception(
+          e.response?.data?['message'] ?? e.message ?? 'An error occurred',
+        ),
       );
     } on Exception catch (e) {
       return ErrorResponse<ChangePasswordResponseModel>(error: e);

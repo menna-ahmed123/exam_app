@@ -1,15 +1,10 @@
-
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_text_styles.dart';
-import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/core/widgets/app_text_field.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/widgets/side_by_side_fields.dart';
-import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ProfileForm extends StatelessWidget {
   const ProfileForm({
@@ -21,6 +16,7 @@ class ProfileForm extends StatelessWidget {
     required this.emailController,
     required this.passwordController,
     required this.phoneController,
+    this.onChangePasswordPressed,
   });
 
   final bool enabled;
@@ -31,6 +27,8 @@ class ProfileForm extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController phoneController;
+
+  final VoidCallback? onChangePasswordPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,7 @@ class ProfileForm extends StatelessWidget {
 
   Widget _buildNameFields() {
     return SideBySideFields(
-       enabled: enabled,
+      enabled: enabled,
       leftLabel: AppStrings.firstName,
       leftHint: '',
       rightLabel: AppStrings.lastName,
@@ -97,12 +95,7 @@ class ProfileForm extends StatelessWidget {
 
   Widget _buildChangePasswordButton(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        context.push(
-          AppRoutes.profileChangePassword,
-          extra: context.read<ProfileViewModel>(),
-        );
-      },
+      onPressed: onChangePasswordPressed,
       child: Text(
         AppStrings.changePassword,
         style: AppTextStyles.styleRegular13(

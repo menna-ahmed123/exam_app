@@ -1,6 +1,5 @@
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/storage/secure_storage_service.dart';
-import 'package:exam_app/core/utils/token_helper.dart';
 import 'package:exam_app/feature/auth/data/data_sources/remote/auth_remote_data_source.dart';
 import 'package:exam_app/feature/auth/data/models/auth_response_model.dart';
 import 'package:exam_app/feature/auth/domain/entities/auth_response_entity.dart';
@@ -31,7 +30,7 @@ class AuthRepoImpl implements AuthRepo {
     switch (response) {
       case SuccessResponse<AuthResponseModel>():
         final entity = response.data.toDomain();
-        await saveToken(secureStorageService, entity.token);
+        await secureStorageService.saveToken(entity.token);
         return SuccessResponse<AuthResponseEntity>(entity);
 
       case ErrorResponse<AuthResponseModel>():
@@ -52,7 +51,7 @@ class AuthRepoImpl implements AuthRepo {
     switch (response) {
       case SuccessResponse<AuthResponseModel>():
         final entity = response.data.toDomain();
-        await saveToken(secureStorageService, entity.token);
+        await secureStorageService.saveToken(entity.token!);
         return SuccessResponse(entity);
 
       case ErrorResponse<AuthResponseModel>():

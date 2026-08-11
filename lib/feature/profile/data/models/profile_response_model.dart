@@ -1,4 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:exam_app/feature/profile/domain/entities/profile_entity.dart';
+
 import 'profile_model.dart';
 
 part 'profile_response_model.g.dart';
@@ -17,4 +19,8 @@ class ProfileResponseModel {
       _$ProfileResponseModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProfileResponseModelToJson(this);
+
+  ProfileEntity toDomain() {
+    return user.toDomain();
+  }
 }

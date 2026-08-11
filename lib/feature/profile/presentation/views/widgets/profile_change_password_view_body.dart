@@ -67,7 +67,6 @@ class ProfileChangePasswordViewBodyState
         message: changePasswordState.errorMessage,
         backgroundColor: AppPalette.error,
       );
-
       return;
     }
 
@@ -84,15 +83,13 @@ class ProfileChangePasswordViewBodyState
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProfileViewModel, ProfileState>(
+    return BlocListener<ProfileViewModel, ProfileState>(
       listener: _listener,
-      builder: (context, state) {
-        return _buildScaffold(state.changePasswordState.isLoading);
-      },
+      child: _buildScaffold(),
     );
   }
 
-  Widget _buildScaffold(bool isLoading) {
+  Widget _buildScaffold() {
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -100,13 +97,13 @@ class ProfileChangePasswordViewBodyState
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.screenHorizontal,
           ),
-          child: _buildContent(isLoading),
+          child: _buildContent(),
         ),
       ),
     );
   }
 
-  Widget _buildContent(bool isLoading) {
+  Widget _buildContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,7 +116,7 @@ class ProfileChangePasswordViewBodyState
         const SizedBox(height: AppSpacing.fieldGap),
         _buildConfirmPasswordField(),
         const SizedBox(height: AppSpacing.buttonTopGap),
-        _buildUpdateButton(isLoading),
+        _buildUpdateButton(),
       ],
     );
   }
@@ -159,10 +156,16 @@ class ProfileChangePasswordViewBodyState
     );
   }
 
-  Widget _buildUpdateButton(bool isLoading) {
-    return AppButton(
-      text: isLoading ? AppStrings.updating : AppStrings.update,
-      onPressed: isLoading ? null : _onUpdatePressed,
+  Widget _buildUpdateButton() {
+    return BlocBuilder<ProfileViewModel, ProfileState>(
+      builder: (context, state) {
+        final isLoading = state.changePasswordState.isLoading;
+
+        return AppButton(
+          text: isLoading ? AppStrings.updating : AppStrings.update,
+          onPressed: isLoading ? null : _onUpdatePressed,
+        );
+      },
     );
   }
 }

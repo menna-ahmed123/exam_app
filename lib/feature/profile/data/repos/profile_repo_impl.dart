@@ -1,6 +1,5 @@
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/storage/secure_storage_service.dart';
-import 'package:exam_app/core/utils/token_helper.dart';
 import 'package:exam_app/feature/profile/data/data_sources/remote/profile_remote_data_source.dart';
 import 'package:exam_app/feature/profile/data/models/change_password_request_model.dart';
 import 'package:exam_app/feature/profile/data/models/change_password_response_model.dart';
@@ -29,7 +28,7 @@ class ProfileRepoImpl implements ProfileRepo {
 
     switch (response) {
       case SuccessResponse<ProfileResponseModel>():
-        final profileEntity = response.data.user.toDomain();
+        final profileEntity = response.data.toDomain();
         return SuccessResponse(profileEntity);
 
       case ErrorResponse<ProfileResponseModel>():
@@ -51,7 +50,7 @@ class ProfileRepoImpl implements ProfileRepo {
 
     switch (response) {
       case SuccessResponse<ProfileResponseModel>():
-        final profileEntity = response.data.user.toDomain();
+        final profileEntity = response.data.toDomain();
         return SuccessResponse(profileEntity);
 
       case ErrorResponse<ProfileResponseModel>():
@@ -62,7 +61,9 @@ class ProfileRepoImpl implements ProfileRepo {
   }
 
   @override
-  Future<BaseResponse<ChangePasswordEntity>> changePassword(ChangePasswordParams params) async {
+  Future<BaseResponse<ChangePasswordEntity>> changePassword(
+    ChangePasswordParams params,
+  ) async {
     final requestModel = ChangePasswordRequestModel.fromDomain(params);
 
     final response = await profileRemoteDataSource.changePassword(
@@ -73,7 +74,7 @@ class ProfileRepoImpl implements ProfileRepo {
       case SuccessResponse<ChangePasswordResponseModel>():
         final entity = response.data.toDomain();
 
-        await saveToken(secureStorageService, entity.token);
+        await secureStorageService.saveToken(entity.token!);
 
         return SuccessResponse<ChangePasswordEntity>(entity);
 

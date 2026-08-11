@@ -4,7 +4,7 @@ import 'package:exam_app/feature/profile/domain/entities/change_password_params.
 import 'package:exam_app/feature/profile/domain/repos/profile_repo.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@Injectable()
 class ChangePasswordUseCase {
   const ChangePasswordUseCase( {required this.profileRepo});
 
