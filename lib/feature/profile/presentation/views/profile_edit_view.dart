@@ -1,0 +1,171 @@
+import 'package:exam_app/app/routing/app_routes.dart';
+import 'package:exam_app/core/constants/app_spacing.dart';
+import 'package:exam_app/core/constants/app_strings.dart';
+import 'package:exam_app/core/resources/app_palette.dart';
+import 'package:exam_app/core/utils/build_snack_bar.dart';
+import 'package:exam_app/core/widgets/app_back_header.dart';
+import 'package:exam_app/core/widgets/app_button.dart';
+import 'package:exam_app/feature/profile/domain/entities/profile_entity.dart';
+import 'package:exam_app/feature/profile/domain/entities/update_profile_params.dart';
+import 'package:exam_app/feature/profile/presentation/view_model/profile_event.dart';
+import 'package:exam_app/feature/profile/presentation/view_model/profile_state.dart';
+import 'package:exam_app/feature/profile/presentation/view_model/profile_view_model.dart';
+import 'package:exam_app/feature/profile/presentation/views/widgets/profile_avatar.dart';
+import 'package:exam_app/feature/profile/presentation/views/widgets/profile_form.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+class ProfileEditView extends StatefulWidget {
+  const ProfileEditView({super.key});
+
+  @override
+  State<ProfileEditView> createState() => ProfileEditViewState();
+}
+
+class ProfileEditViewState extends State<ProfileEditView> {
+  final _usernameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<ProfileViewModel>().doEvent(GetProfileEvent());
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _populateControllers(ProfileEntity profile) {
+    _usernameController.text = profile.username;
+    _firstNameController.text = profile.firstName;
+    _lastNameController.text = profile.lastName;
+    _emailController.text = profile.email;
+    _phoneController.text = profile.phone;
+    _passwordController.text = '********';
+  }
+
+  void _onChangePasswordPressed() {
+    context.pushNamed(AppRoutes.profileChangePassword);
+  }
+
+  void _onUpdatePressed() {
+    final params = UpdateProfileParams(
+      username: _usernameController.text.trim(),
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
+    );
+
+    context.read<ProfileViewModel>().doEvent(
+      UpdateProfileEvent(params: params),
+    );
+  }
+
+  void _listener(BuildContext context, ProfileState state) {
+    final profile = state.profileState.data;
+
+    if (profile != null) {
+      _populateControllers(profile);
+    }
+
+    final updateState = state.updateProfileState;
+
+    if (updateState.errorMessage.isNotEmpty) {
+      buildSnackBar(
+        context: context,
+        message: updateState.errorMessage,
+        backgroundColor: AppPalette.error,
+      );
+
+      return;
+    }
+
+    if (!updateState.isLoading && updateState.data != null) {
+      context.pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<ProfileViewModel, ProfileState>(
+      listenWhen: (previous, current) =>
+          previous.profileState != current.profileState ||
+          previous.updateProfileState != current.updateProfileState,
+      listener: _listener,
+      builder: (context, state) {
+        return Scaffold(body: _buildBody(state));
+      },
+    );
+  }
+
+  Widget _buildBody(ProfileState state) {
+    if (state.profileState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.profileState.errorMessage.isNotEmpty) {
+      return Center(child: Text(state.profileState.errorMessage));
+    }
+
+    return _buildContent(state.updateProfileState.isLoading);
+  }
+
+  Widget _buildContent(bool isLoading) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenHorizontal,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: AppSpacing.appParSpace),
+            const AppBackHeader(title: AppStrings.editProfile),
+            const SizedBox(height: AppSpacing.sectionGap),
+            const Center(child: ProfileAvatar()),
+            const SizedBox(height: AppSpacing.buttonTopGap),
+            _buildProfileForm(),
+            const SizedBox(height: AppSpacing.buttonTopGap),
+            _buildUpdateButton(isLoading),
+            const SizedBox(height: AppSpacing.sectionGap),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileForm() {
+    return ProfileForm(
+      enabled: true,
+      usernameController: _usernameController,
+      firstNameController: _firstNameController,
+      lastNameController: _lastNameController,
+      emailController: _emailController,
+      passwordController: _passwordController,
+      phoneController: _phoneController,
+      onChangePasswordPressed: _onChangePasswordPressed,
+    );
+  }
+
+  Widget _buildUpdateButton(bool isLoading) {
+    return AppButton(
+      text: AppStrings.update,
+      isLoading: isLoading,
+      onPressed: isLoading ? null : _onUpdatePressed,
+    );
+  }
+}

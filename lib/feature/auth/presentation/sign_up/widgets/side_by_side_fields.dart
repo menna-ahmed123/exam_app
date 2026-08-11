@@ -8,6 +8,7 @@ class SideBySideFields extends StatelessWidget {
     required this.leftHint,
     required this.rightLabel,
     required this.rightHint,
+    this.enabled,
     this.leftController,
     this.rightController,
     this.onLeftChanged,
@@ -22,6 +23,8 @@ class SideBySideFields extends StatelessWidget {
   final String leftHint;
   final String rightLabel;
   final String rightHint;
+  final bool? enabled;
+
   final TextEditingController? leftController;
   final TextEditingController? rightController;
   final ValueChanged<String>? onLeftChanged;
@@ -50,6 +53,7 @@ class SideBySideFields extends StatelessWidget {
       label: leftLabel,
       hint: leftHint,
       controller: leftController,
+      enabled: enabled ?? true,
       obscureText: leftObscureText,
       onChanged: onLeftChanged,
       validator: leftValidator,
@@ -61,6 +65,7 @@ class SideBySideFields extends StatelessWidget {
       label: rightLabel,
       hint: rightHint,
       controller: rightController,
+      enabled: enabled ?? true,
       obscureText: rightObscureText,
       onChanged: onRightChanged,
       validator: rightValidator,

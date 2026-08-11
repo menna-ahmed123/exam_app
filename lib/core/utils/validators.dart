@@ -1,3 +1,4 @@
+
 class Validators {
   Validators._();
 
@@ -21,13 +22,31 @@ class Validators {
     return null;
   }
 
+  static String? name(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Name is required';
+    }
+
+    return null;
+  }
+
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
     }
+
     if (!_emailRegex.hasMatch(value.trim())) {
       return 'This Email is not valid';
     }
+
+    return null;
+  }
+
+  static String? phone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Phone number is required';
+    }
+
     return null;
   }
 
@@ -35,9 +54,11 @@ class Validators {
     if (value == null || value.trim().isEmpty) {
       return 'Code is required';
     }
+
     if (value.trim().length != 4) {
       return 'Invalid code';
     }
+
     return null;
   }
 
@@ -65,9 +86,12 @@ class Validators {
     if (value == null || value.trim().isEmpty) {
       return 'Confirm password is required';
     }
+
     if (value != password) {
       return 'Password not matched';
     }
+
     return null;
   }
 }
+

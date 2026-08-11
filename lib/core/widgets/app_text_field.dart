@@ -18,6 +18,7 @@ class AppTextField extends StatefulWidget {
     this.enabled = true,
     this.inputFormatters,
     this.autofillHints,
+    this.suffix,
   });
 
   final String label;
@@ -32,6 +33,9 @@ class AppTextField extends StatefulWidget {
   final bool enabled;
   final List<TextInputFormatter>? inputFormatters;
   final Iterable<String>? autofillHints;
+
+
+  final Widget? suffix;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -83,7 +87,10 @@ class _AppTextFieldState extends State<AppTextField> {
       hintStyle: AppTextStyles.styleRegular16(color: AppPalette.hintText),
       floatingLabelStyle: AppTextStyles.styleRegular13(color: _labelColor),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      suffixIcon: widget.obscureText ? _visibilityToggle() : null,
+
+      suffixIcon:
+          widget.suffix ?? (widget.obscureText ? _visibilityToggle() : null),
+
       enabledBorder: _border(),
       focusedBorder: _border(width: 1.5),
       errorBorder: _border(),
@@ -112,7 +119,9 @@ class _AppTextFieldState extends State<AppTextField> {
     return IconButton(
       onPressed: () => setState(() => _obscureText = !_obscureText),
       icon: Icon(
-        _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+        _obscureText
+            ? Icons.visibility_outlined
+            : Icons.visibility_off_outlined,
         color: AppPalette.grey,
       ),
     );

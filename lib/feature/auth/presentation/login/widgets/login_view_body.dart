@@ -1,7 +1,7 @@
 import 'package:exam_app/core/constants/app_spacing.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
 import 'package:exam_app/core/resources/app_palette.dart';
-import 'package:exam_app/core/routing/app_routes.dart';
+import 'package:exam_app/app/routing/app_routes.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/utils/validators.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
