@@ -23,6 +23,7 @@ class AppPalette {
   static const Color inputBorder = Color.fromARGB(255, 29, 25, 43);
 
   static const Color lightBlue = Color.fromARGB(255, 223, 231, 247);
+  static const Color scaffoldGrey = Color.fromARGB(255, 249, 249, 249);
 
   // Button
   static const Color disabledButton = Color.fromARGB(255, 158, 158, 158);

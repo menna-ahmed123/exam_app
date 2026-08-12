@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:exam_app/core/api/api_constants.dart';
+import 'package:exam_app/core/api/auth_interceptor.dart';
 import 'package:exam_app/feature/auth/api/client/auth_api_client.dart';
+import 'package:exam_app/feature/exam/api/client/exam_api_client.dart';
 import 'package:exam_app/feature/forgot_password/api/client/forgot_password_api_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,6 +29,7 @@ abstract class AppModule {
   @lazySingleton
   Dio dio() {
     final client = Dio(createBaseOptions());
+    client.interceptors.add(AuthInterceptor());
     if (kDebugMode) {
       client.interceptors.add(createDebugLogInterceptor());
     }
@@ -39,6 +42,9 @@ abstract class AppModule {
   @lazySingleton
   ForgotPasswordApiClient forgotPasswordApiClient(Dio dio) =>
       ForgotPasswordApiClient(dio);
+
+  @lazySingleton
+  ExamApiClient examApiClient(Dio dio) => ExamApiClient(dio);
 
   @lazySingleton
   FlutterSecureStorage secureStorage() {
