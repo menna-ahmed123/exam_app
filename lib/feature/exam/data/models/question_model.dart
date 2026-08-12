@@ -9,7 +9,7 @@ class QuestionModel {
   @JsonKey(name: '_id')
   final String id;
   final String question;
-  @JsonKey(fromJson: _answersFromJson)
+  @JsonKey(fromJson: answersFromJson)
   final List<AnswerOptionModel> answers;
   @JsonKey(defaultValue: 'single_choice')
   final String type;
@@ -45,43 +45,47 @@ class QuestionModel {
     );
   }
 
-  static List<AnswerOptionModel> _answersFromJson(dynamic value) {
-    if (value is List) {
-      final options = <AnswerOptionModel>[];
-      for (var index = 0; index < value.length; index++) {
-        final item = value[index];
-        if (item is String) {
-          final text = item.trim();
-          if (text.isEmpty || text == '~') continue;
-          options.add(AnswerOptionModel(answer: text, key: 'A${index + 1}'));
-          continue;
-        }
-        if (item is! Map) continue;
-        final map = Map<String, dynamic>.from(item);
-        final answer =
-            (map['answer'] ?? map['Answer'] ?? map['text'])?.toString() ?? '';
-        var key = (map['key'] ?? map['Key'])?.toString().trim() ?? '';
-        if (key.isEmpty) key = 'A${index + 1}';
-        if (answer.isEmpty || answer == '~') continue;
-        options.add(AnswerOptionModel(answer: answer, key: key));
-      }
-      return options;
-    }
-
-    if (value is Map) {
-      final map = Map<String, dynamic>.from(value);
-      const keys = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'];
-      final options = <AnswerOptionModel>[];
-      for (final key in keys) {
-        final answer = map[key];
-        if (answer == null) continue;
-        final text = answer.toString();
-        if (text.isEmpty || text == '~') continue;
-        options.add(AnswerOptionModel(answer: text, key: key));
-      }
-      return options;
-    }
-
+  static List<AnswerOptionModel> answersFromJson(dynamic value) {
+    if (value is List) return answersFromList(value);
+    if (value is Map) return answersFromMap(Map<String, dynamic>.from(value));
     return const [];
+  }
+
+  static List<AnswerOptionModel> answersFromList(List<dynamic> value) {
+    final options = <AnswerOptionModel>[];
+    for (var index = 0; index < value.length; index++) {
+      final option = optionFromListItem(value[index], index);
+      if (option != null) options.add(option);
+    }
+    return options;
+  }
+
+  static AnswerOptionModel? optionFromListItem(dynamic item, int index) {
+    if (item is String) {
+      final text = item.trim();
+      if (text.isEmpty || text == '~') return null;
+      return AnswerOptionModel(answer: text, key: 'A${index + 1}');
+    }
+    if (item is! Map) return null;
+    final map = Map<String, dynamic>.from(item);
+    final answer =
+        (map['answer'] ?? map['Answer'] ?? map['text'])?.toString() ?? '';
+    var key = (map['key'] ?? map['Key'])?.toString().trim() ?? '';
+    if (key.isEmpty) key = 'A${index + 1}';
+    if (answer.isEmpty || answer == '~') return null;
+    return AnswerOptionModel(answer: answer, key: key);
+  }
+
+  static List<AnswerOptionModel> answersFromMap(Map<String, dynamic> map) {
+    const keys = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'];
+    final options = <AnswerOptionModel>[];
+    for (final key in keys) {
+      final answer = map[key];
+      if (answer == null) continue;
+      final text = answer.toString();
+      if (text.isEmpty || text == '~') continue;
+      options.add(AnswerOptionModel(answer: text, key: key));
+    }
+    return options;
   }
 }

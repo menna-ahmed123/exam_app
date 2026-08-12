@@ -24,30 +24,25 @@ class AnswerOptionTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          child: Row(
-            children: [
-              Icon(
-                _icon,
-                color: AppPalette.primaryBlue,
-                size: 22,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  text,
-                  style: AppTextStyles.styleRegular16(),
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: tileContent(),
       ),
     );
   }
 
-  IconData get _icon {
+  Widget tileContent() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      child: Row(
+        children: [
+          Icon(optionIcon, color: AppPalette.primaryBlue, size: 22),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: AppTextStyles.styleRegular16())),
+        ],
+      ),
+    );
+  }
+
+  IconData get optionIcon {
     if (isMultiple) {
       return isSelected ? Icons.check_box : Icons.check_box_outline_blank;
     }

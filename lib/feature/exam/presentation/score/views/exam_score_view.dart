@@ -25,75 +25,93 @@ class ExamScoreView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.screenHorizontal,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              AppBackHeader(
-                title: AppStrings.examScore,
-                onBackPressed: () => context.go(AppRoutes.home),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                AppStrings.yourScore,
-                style: AppTextStyles.styleMedium18(),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  ScoreRing(percentage: args.percentage),
-                  const SizedBox(width: 32),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _ScoreStat(
-                        label: AppStrings.correct,
-                        value: args.correct,
-                        color: AppPalette.primaryBlue,
-                      ),
-                      const SizedBox(height: 16),
-                      _ScoreStat(
-                        label: AppStrings.incorrect,
-                        value: args.wrong,
-                        color: AppPalette.error,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const Spacer(),
-              AppButton(
-                text: AppStrings.showResults,
-                onPressed: () => context.go(AppRoutes.home),
-              ),
-              const SizedBox(height: 12),
-              AppOutlinedButton(
-                text: AppStrings.startAgain,
-                onPressed: () {
-                  context.pushReplacement(
-                    AppRoutes.examInstructions,
-                    extra: ExamSessionArgs(
-                      examId: args.examId,
-                      examTitle: args.examTitle,
-                      subjectId: args.subjectId,
-                      subjectName: args.subjectName,
-                      durationMinutes: args.durationMinutes,
-                      numberOfQuestions: args.numberOfQuestions,
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
+          child: scoreBody(context),
         ),
+      ),
+    );
+  }
+
+  Widget scoreBody(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        AppBackHeader(
+          title: AppStrings.examScore,
+          onBackPressed: () => context.go(AppRoutes.home),
+        ),
+        const SizedBox(height: 32),
+        Text(AppStrings.yourScore, style: AppTextStyles.styleMedium18()),
+        const SizedBox(height: 24),
+        scoreSummary(),
+        const Spacer(),
+        ...actionButtons(context),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget scoreSummary() {
+    return Row(
+      children: [
+        ScoreRing(percentage: args.percentage),
+        const SizedBox(width: 32),
+        scoreStatsColumn(),
+      ],
+    );
+  }
+
+  Widget scoreStatsColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ScoreStat(
+          label: AppStrings.correct,
+          value: args.correct,
+          color: AppPalette.primaryBlue,
+        ),
+        const SizedBox(height: 16),
+        ScoreStat(
+          label: AppStrings.incorrect,
+          value: args.wrong,
+          color: AppPalette.error,
+        ),
+      ],
+    );
+  }
+
+  List<Widget> actionButtons(BuildContext context) {
+    return [
+      AppButton(
+        text: AppStrings.showResults,
+        onPressed: () => context.go(AppRoutes.home),
+      ),
+      const SizedBox(height: 12),
+      AppOutlinedButton(
+        text: AppStrings.startAgain,
+        onPressed: () => startAgain(context),
+      ),
+    ];
+  }
+
+  void startAgain(BuildContext context) {
+    context.pushReplacement(
+      AppRoutes.examInstructions,
+      extra: ExamSessionArgs(
+        examId: args.examId,
+        examTitle: args.examTitle,
+        subjectId: args.subjectId,
+        subjectName: args.subjectName,
+        durationMinutes: args.durationMinutes,
+        numberOfQuestions: args.numberOfQuestions,
       ),
     );
   }
 }
 
-class _ScoreStat extends StatelessWidget {
-  const _ScoreStat({
+class ScoreStat extends StatelessWidget {
+  const ScoreStat({
+    super.key,
     required this.label,
     required this.value,
     required this.color,
@@ -107,25 +125,23 @@ class _ScoreStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
-          label,
-          style: AppTextStyles.styleMedium16(color: color),
-        ),
+        Text(label, style: AppTextStyles.styleMedium16(color: color)),
         const SizedBox(width: 12),
-        Container(
-          width: 36,
-          height: 36,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: color),
-          ),
-          child: Text(
-            '$value',
-            style: AppTextStyles.styleMedium16(color: color),
-          ),
-        ),
+        scoreBadge(),
       ],
+    );
+  }
+
+  Widget scoreBadge() {
+    return Container(
+      width: 36,
+      height: 36,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: color),
+      ),
+      child: Text('$value', style: AppTextStyles.styleMedium16(color: color)),
     );
   }
 }

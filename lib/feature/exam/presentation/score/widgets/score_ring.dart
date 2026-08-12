@@ -16,7 +16,7 @@ class ScoreRing extends StatelessWidget {
       width: 120,
       height: 120,
       child: CustomPaint(
-        painter: _ScoreRingPainter(percentage: clamped),
+        painter: ScoreRingPainter(percentage: clamped),
         child: Center(
           child: Text(
             '${clamped.round()}%',
@@ -28,56 +28,67 @@ class ScoreRing extends StatelessWidget {
   }
 }
 
-class _ScoreRingPainter extends CustomPainter {
-  _ScoreRingPainter({required this.percentage});
+class ScoreRingPainter extends CustomPainter {
+  ScoreRingPainter({required this.percentage});
 
   final double percentage;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final rect = arcRect(size);
+    canvas.drawArc(rect, 0, 2 * math.pi, false, backgroundPaint());
+    drawProgressArcs(canvas, rect);
+  }
+
+  Rect arcRect(Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2;
     const strokeWidth = 12.0;
-    final rect = Rect.fromCircle(center: center, radius: radius - strokeWidth);
+    return Rect.fromCircle(center: center, radius: radius - strokeWidth);
+  }
 
-    final backgroundPaint = Paint()
-      ..color = AppPalette.optionBackground
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final correctPaint = Paint()
-      ..color = AppPalette.primaryBlue
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final wrongPaint = Paint()
-      ..color = AppPalette.error
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(rect, 0, 2 * math.pi, false, backgroundPaint);
-
+  void drawProgressArcs(Canvas canvas, Rect rect) {
     final correctSweep = (percentage / 100) * 2 * math.pi;
     final wrongSweep = ((100 - percentage) / 100) * 2 * math.pi;
     const start = -math.pi / 2;
-
-    canvas.drawArc(rect, start, correctSweep, false, correctPaint);
+    canvas.drawArc(rect, start, correctSweep, false, correctPaint());
     if (wrongSweep > 0) {
       canvas.drawArc(
         rect,
         start + correctSweep,
         wrongSweep,
         false,
-        wrongPaint,
+        wrongPaint(),
       );
     }
   }
 
+  Paint backgroundPaint() {
+    return Paint()
+      ..color = AppPalette.optionBackground
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12
+      ..strokeCap = StrokeCap.round;
+  }
+
+  Paint correctPaint() {
+    return Paint()
+      ..color = AppPalette.primaryBlue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12
+      ..strokeCap = StrokeCap.round;
+  }
+
+  Paint wrongPaint() {
+    return Paint()
+      ..color = AppPalette.error
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12
+      ..strokeCap = StrokeCap.round;
+  }
+
   @override
-  bool shouldRepaint(covariant _ScoreRingPainter oldDelegate) {
+  bool shouldRepaint(covariant ScoreRingPainter oldDelegate) {
     return oldDelegate.percentage != percentage;
   }
 }

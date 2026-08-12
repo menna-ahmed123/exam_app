@@ -85,7 +85,21 @@ class ExamRepoImpl implements ExamRepo {
     required List<Map<String, String>> answers,
     required int time,
   }) async {
-    final request = CheckQuestionsRequestModel(
+    final request = buildCheckRequest(answers: answers, time: time);
+    final response = await examRemoteDataSource.checkQuestions(request: request);
+    switch (response) {
+      case SuccessResponse<CheckQuestionsResponseModel>():
+        return SuccessResponse(response.data.toDomain());
+      case ErrorResponse<CheckQuestionsResponseModel>():
+        return ErrorResponse(errorMessage: response.errorMessage);
+    }
+  }
+
+  CheckQuestionsRequestModel buildCheckRequest({
+    required List<Map<String, String>> answers,
+    required int time,
+  }) {
+    return CheckQuestionsRequestModel(
       answers: answers
           .map(
             (answer) => CheckAnswerRequestModel(
@@ -96,12 +110,5 @@ class ExamRepoImpl implements ExamRepo {
           .toList(),
       time: time,
     );
-    final response = await examRemoteDataSource.checkQuestions(request: request);
-    switch (response) {
-      case SuccessResponse<CheckQuestionsResponseModel>():
-        return SuccessResponse(response.data.toDomain());
-      case ErrorResponse<CheckQuestionsResponseModel>():
-        return ErrorResponse(errorMessage: response.errorMessage);
-    }
   }
 }

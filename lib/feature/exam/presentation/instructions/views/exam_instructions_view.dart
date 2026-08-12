@@ -49,12 +49,16 @@ class ExamInstructionsView extends StatelessWidget {
         const SizedBox(height: 12),
         ...instructions.map(_instructionRow),
         const Spacer(),
-        AppButton(
-          text: AppStrings.start,
-          onPressed: () => context.push(AppRoutes.takingExam, extra: args),
-        ),
+        _startButton(context),
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  Widget _startButton(BuildContext context) {
+    return AppButton(
+      text: AppStrings.start,
+      onPressed: () => context.push(AppRoutes.takingExam, extra: args),
     );
   }
 

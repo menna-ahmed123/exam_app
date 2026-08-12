@@ -14,7 +14,7 @@ class AppOutlinedButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
 
-  bool get _isEnabled => onPressed != null && !isLoading;
+  bool get isEnabled => onPressed != null && !isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -22,31 +22,32 @@ class AppOutlinedButton extends StatelessWidget {
       width: double.infinity,
       height: 48,
       child: OutlinedButton(
-        onPressed: _isEnabled ? onPressed : null,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppPalette.primaryBlue,
-          disabledForegroundColor: AppPalette.disabledButton,
-          side: BorderSide(
-            color: _isEnabled
-                ? AppPalette.primaryBlue
-                : AppPalette.disabledButton,
-          ),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          textStyle: AppTextStyles.styleMedium16(
-            color: AppPalette.primaryBlue,
-          ),
-        ),
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : Text(text),
+        onPressed: isEnabled ? onPressed : null,
+        style: buttonStyle(),
+        child: buttonChild(),
       ),
+    );
+  }
+
+  ButtonStyle buttonStyle() {
+    return OutlinedButton.styleFrom(
+      foregroundColor: AppPalette.primaryBlue,
+      disabledForegroundColor: AppPalette.disabledButton,
+      side: BorderSide(
+        color: isEnabled ? AppPalette.primaryBlue : AppPalette.disabledButton,
+      ),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      textStyle: AppTextStyles.styleMedium16(color: AppPalette.primaryBlue),
+    );
+  }
+
+  Widget buttonChild() {
+    if (!isLoading) return Text(text);
+    return const SizedBox(
+      width: 24,
+      height: 24,
+      child: CircularProgressIndicator(strokeWidth: 2),
     );
   }
 }
