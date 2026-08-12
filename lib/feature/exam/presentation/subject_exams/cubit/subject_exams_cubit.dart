@@ -8,18 +8,30 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class SubjectExamsCubit extends Cubit<SubjectExamsState> {
-  SubjectExamsCubit(this._getExamsUseCase) : super(SubjectExamsState.initial());
+  SubjectExamsCubit(this.getExamsUseCase)
+      : super(SubjectExamsState.initial());
 
-  final GetExamsUseCase _getExamsUseCase;
+  final GetExamsUseCase getExamsUseCase;
 
   void onEvent(SubjectExamsEvent event) {
     switch (event) {
       case SubjectExamsLoad(:final subjectId):
-        _load(subjectId);
+        load(subjectId);
     }
   }
 
-  Future<void> _load(String subjectId) async {
+  Future<void> load(String subjectId) async {
+    emitLoading();
+    final response = await getExamsUseCase(subjectId: subjectId);
+    switch (response) {
+      case SuccessResponse<List<ExamEntity>>():
+        emitSuccess(response.data);
+      case ErrorResponse<List<ExamEntity>>():
+        emitError(response.errorMessage);
+    }
+  }
+
+  void emitLoading() {
     emit(
       state.copyWith(
         examsState: state.examsState?.copyWith(
@@ -28,28 +40,28 @@ class SubjectExamsCubit extends Cubit<SubjectExamsState> {
         ),
       ),
     );
+  }
 
-    final response = await _getExamsUseCase(subjectId: subjectId);
-    switch (response) {
-      case SuccessResponse<List<ExamEntity>>():
-        emit(
-          state.copyWith(
-            examsState: state.examsState?.copyWith(
-              isLoading: false,
-              data: response.data,
-              errorMessage: '',
-            ),
-          ),
-        );
-      case ErrorResponse<List<ExamEntity>>():
-        emit(
-          state.copyWith(
-            examsState: state.examsState?.copyWith(
-              isLoading: false,
-              errorMessage: response.errorMessage,
-            ),
-          ),
-        );
-    }
+  void emitSuccess(List<ExamEntity> exams) {
+    emit(
+      state.copyWith(
+        examsState: state.examsState?.copyWith(
+          isLoading: false,
+          data: exams,
+          errorMessage: '',
+        ),
+      ),
+    );
+  }
+
+  void emitError(String message) {
+    emit(
+      state.copyWith(
+        examsState: state.examsState?.copyWith(
+          isLoading: false,
+          errorMessage: message,
+        ),
+      ),
+    );
   }
 }

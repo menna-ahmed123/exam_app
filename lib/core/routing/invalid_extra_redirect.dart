@@ -7,10 +7,10 @@ class InvalidExtraRedirect extends StatefulWidget {
   const InvalidExtraRedirect({super.key});
 
   @override
-  State<InvalidExtraRedirect> createState() => _InvalidExtraRedirectState();
+  State<InvalidExtraRedirect> createState() => InvalidExtraRedirectState();
 }
 
-class _InvalidExtraRedirectState extends State<InvalidExtraRedirect> {
+class InvalidExtraRedirectState extends State<InvalidExtraRedirect> {
   @override
   void initState() {
     super.initState();

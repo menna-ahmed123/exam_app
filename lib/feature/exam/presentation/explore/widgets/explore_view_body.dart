@@ -17,11 +17,11 @@ class ExploreViewBody extends StatefulWidget {
   const ExploreViewBody({super.key});
 
   @override
-  State<ExploreViewBody> createState() => _ExploreViewBodyState();
+  State<ExploreViewBody> createState() => ExploreViewBodyState();
 }
 
-class _ExploreViewBodyState extends State<ExploreViewBody> {
-  final TextEditingController _searchController = TextEditingController();
+class ExploreViewBodyState extends State<ExploreViewBody> {
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ExploreViewBodyState extends State<ExploreViewBody> {
 
   @override
   void dispose() {
-    _searchController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -43,109 +43,108 @@ class _ExploreViewBodyState extends State<ExploreViewBody> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          Text(
-            AppStrings.survey,
-            style: AppTextStyles.styleSemiBold24(
-              color: AppPalette.primaryBlue,
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _searchController,
-            onChanged: (value) {
-              context.read<ExploreCubit>().onEvent(
-                ExploreEvent.searchChanged(value),
-              );
-            },
-            style: AppTextStyles.styleRegular16(),
-            decoration: InputDecoration(
-              hintText: AppStrings.search,
-              hintStyle: AppTextStyles.styleRegular16(
-                color: AppPalette.hintText,
-              ),
-              prefixIcon: const Icon(
-                Icons.search,
-                color: AppPalette.hintText,
-              ),
-              filled: true,
-              fillColor: AppPalette.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: const BorderSide(color: AppPalette.border),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: const BorderSide(color: AppPalette.border),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: const BorderSide(color: AppPalette.primaryBlue),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            AppStrings.browseBySubject,
-            style: AppTextStyles.styleMedium18(),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: BlocConsumer<ExploreCubit, ExploreState>(
-              listener: (context, state) {
-                final error = state.subjectsState?.errorMessage ?? '';
-                if (error.isNotEmpty) {
-                  buildSnackBar(
-                    context: context,
-                    message: error,
-                    backgroundColor: AppPalette.error,
-                  );
-                }
-              },
-              builder: (context, state) {
-                final isLoading = state.subjectsState?.isLoading ?? false;
-                final subjects = context.read<ExploreCubit>().filteredSubjects;
-
-                if (isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (subjects.isEmpty) {
-                  return Center(
-                    child: Text(
-                      AppStrings.noSubjectsFound,
-                      style: AppTextStyles.styleRegular16(
-                        color: AppPalette.grey,
-                      ),
-                    ),
-                  );
-                }
-
-                return ListView.separated(
-                  itemCount: subjects.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final subject = subjects[index];
-                    return SubjectCard(
-                      subject: subject,
-                      onTap: () => _openSubjectExams(subject),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+        children: _columnChildren(),
       ),
     );
   }
 
-  void _openSubjectExams(SubjectEntity subject) {
+  List<Widget> _columnChildren() {
+    return [
+      const SizedBox(height: 12),
+      Text(
+        AppStrings.survey,
+        style: AppTextStyles.styleSemiBold24(color: AppPalette.primaryBlue),
+      ),
+      const SizedBox(height: 16),
+      _searchField(),
+      const SizedBox(height: 24),
+      Text(AppStrings.browseBySubject, style: AppTextStyles.styleMedium18()),
+      const SizedBox(height: 12),
+      Expanded(child: _subjectsConsumer()),
+    ];
+  }
+
+  Widget _searchField() {
+    return TextField(
+      controller: searchController,
+      onChanged: (value) {
+        context.read<ExploreCubit>().onEvent(ExploreEvent.searchChanged(value));
+      },
+      style: AppTextStyles.styleRegular16(),
+      decoration: _searchDecoration(),
+    );
+  }
+
+  InputDecoration _searchDecoration() {
+    return InputDecoration(
+      hintText: AppStrings.search,
+      hintStyle: AppTextStyles.styleRegular16(color: AppPalette.hintText),
+      prefixIcon: const Icon(Icons.search, color: AppPalette.hintText),
+      filled: true,
+      fillColor: AppPalette.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      border: _searchBorder(AppPalette.border),
+      enabledBorder: _searchBorder(AppPalette.border),
+      focusedBorder: _searchBorder(AppPalette.primaryBlue),
+    );
+  }
+
+  OutlineInputBorder _searchBorder(Color color) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: BorderSide(color: color),
+    );
+  }
+
+  Widget _subjectsConsumer() {
+    return BlocConsumer<ExploreCubit, ExploreState>(
+      listener: _onExploreState,
+      builder: (context, state) => _subjectsContent(context, state),
+    );
+  }
+
+  void _onExploreState(BuildContext context, ExploreState state) {
+    final error = state.subjectsState?.errorMessage ?? '';
+    if (error.isEmpty) return;
+    buildSnackBar(
+      context: context,
+      message: error,
+      backgroundColor: AppPalette.error,
+    );
+  }
+
+  Widget _subjectsContent(BuildContext context, ExploreState state) {
+    final isLoading = state.subjectsState?.isLoading ?? false;
+    final subjects = context.read<ExploreCubit>().filteredSubjects;
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (subjects.isEmpty) {
+      return Center(
+        child: Text(
+          AppStrings.noSubjectsFound,
+          style: AppTextStyles.styleRegular16(color: AppPalette.grey),
+        ),
+      );
+    }
+    return _subjectsList(subjects);
+  }
+
+  Widget _subjectsList(List<SubjectEntity> subjects) {
+    return ListView.separated(
+      itemCount: subjects.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final subject = subjects[index];
+        return SubjectCard(
+          subject: subject,
+          onTap: () => openSubjectExams(subject),
+        );
+      },
+    );
+  }
+
+  void openSubjectExams(SubjectEntity subject) {
     context.push(AppRoutes.subjectExams, extra: subject);
   }
 }

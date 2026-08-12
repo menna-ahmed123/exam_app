@@ -8,20 +8,31 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class ExploreCubit extends Cubit<ExploreState> {
-  ExploreCubit(this._getSubjectsUseCase) : super(ExploreState.initial());
+  ExploreCubit(this.getSubjectsUseCase) : super(ExploreState.initial());
 
-  final GetSubjectsUseCase _getSubjectsUseCase;
+  final GetSubjectsUseCase getSubjectsUseCase;
 
   void onEvent(ExploreEvent event) {
     switch (event) {
       case ExploreLoadSubjects():
-        _loadSubjects();
+        loadSubjects();
       case ExploreSearchChanged(:final query):
         emit(state.copyWith(searchQuery: query));
     }
   }
 
-  Future<void> _loadSubjects() async {
+  Future<void> loadSubjects() async {
+    emitLoading();
+    final response = await getSubjectsUseCase();
+    switch (response) {
+      case SuccessResponse<List<SubjectEntity>>():
+        emitSuccess(response.data);
+      case ErrorResponse<List<SubjectEntity>>():
+        emitError(response.errorMessage);
+    }
+  }
+
+  void emitLoading() {
     emit(
       state.copyWith(
         subjectsState: state.subjectsState?.copyWith(
@@ -30,28 +41,29 @@ class ExploreCubit extends Cubit<ExploreState> {
         ),
       ),
     );
-    final response = await _getSubjectsUseCase();
-    switch (response) {
-      case SuccessResponse<List<SubjectEntity>>():
-        emit(
-          state.copyWith(
-            subjectsState: state.subjectsState?.copyWith(
-              isLoading: false,
-              data: response.data,
-              errorMessage: '',
-            ),
-          ),
-        );
-      case ErrorResponse<List<SubjectEntity>>():
-        emit(
-          state.copyWith(
-            subjectsState: state.subjectsState?.copyWith(
-              isLoading: false,
-              errorMessage: response.errorMessage,
-            ),
-          ),
-        );
-    }
+  }
+
+  void emitSuccess(List<SubjectEntity> subjects) {
+    emit(
+      state.copyWith(
+        subjectsState: state.subjectsState?.copyWith(
+          isLoading: false,
+          data: subjects,
+          errorMessage: '',
+        ),
+      ),
+    );
+  }
+
+  void emitError(String message) {
+    emit(
+      state.copyWith(
+        subjectsState: state.subjectsState?.copyWith(
+          isLoading: false,
+          errorMessage: message,
+        ),
+      ),
+    );
   }
 
   List<SubjectEntity> get filteredSubjects {

@@ -10,57 +10,67 @@ class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
 
   @override
-  State<ExploreView> createState() => _ExploreViewState();
+  State<ExploreView> createState() => ExploreViewState();
 }
 
-class _ExploreViewState extends State<ExploreView> {
-  int _currentIndex = 0;
+class ExploreViewState extends State<ExploreView> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPalette.scaffoldGrey,
-      body: SafeArea(
-        child: IndexedStack(
-          index: _currentIndex,
-          children: const [
-            ExploreViewBody(),
-            _ResultPlaceholder(),
-            _ProfilePlaceholder(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
-        },
-        indicatorColor: AppPalette.lightBlue,
-        backgroundColor: AppPalette.white,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home, color: AppPalette.primaryBlue),
-            label: AppStrings.explore,
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.assignment_outlined),
-            selectedIcon: Icon(Icons.assignment, color: AppPalette.primaryBlue),
-            label: AppStrings.result,
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person, color: AppPalette.primaryBlue),
-            label: AppStrings.profile,
-          ),
-        ],
-      ),
+      body: SafeArea(child: _tabBody()),
+      bottomNavigationBar: _bottomNav(),
     );
+  }
+
+  Widget _tabBody() {
+    return IndexedStack(
+      index: currentIndex,
+      children: const [
+        ExploreViewBody(),
+        ResultPlaceholder(),
+        ProfilePlaceholder(),
+      ],
+    );
+  }
+
+  Widget _bottomNav() {
+    return NavigationBar(
+      selectedIndex: currentIndex,
+      onDestinationSelected: (index) {
+        setState(() => currentIndex = index);
+      },
+      indicatorColor: AppPalette.lightBlue,
+      backgroundColor: AppPalette.white,
+      destinations: _destinations(),
+    );
+  }
+
+  List<NavigationDestination> _destinations() {
+    return const [
+      NavigationDestination(
+        icon: Icon(Icons.home_outlined),
+        selectedIcon: Icon(Icons.home, color: AppPalette.primaryBlue),
+        label: AppStrings.explore,
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.assignment_outlined),
+        selectedIcon: Icon(Icons.assignment, color: AppPalette.primaryBlue),
+        label: AppStrings.result,
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.person_outline),
+        selectedIcon: Icon(Icons.person, color: AppPalette.primaryBlue),
+        label: AppStrings.profile,
+      ),
+    ];
   }
 }
 
-class _ResultPlaceholder extends StatelessWidget {
-  const _ResultPlaceholder();
+class ResultPlaceholder extends StatelessWidget {
+  const ResultPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +83,8 @@ class _ResultPlaceholder extends StatelessWidget {
   }
 }
 
-class _ProfilePlaceholder extends StatelessWidget {
-  const _ProfilePlaceholder();
+class ProfilePlaceholder extends StatelessWidget {
+  const ProfilePlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {

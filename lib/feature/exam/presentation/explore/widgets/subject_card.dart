@@ -23,43 +23,40 @@ class SubjectCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              _SubjectIcon(iconUrl: subject.icon),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  subject.name,
-                  style: AppTextStyles.styleMedium16(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+        child: _content(),
+      ),
+    );
+  }
+
+  Widget _content() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          SubjectIcon(iconUrl: subject.icon),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              subject.name,
+              style: AppTextStyles.styleMedium16(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-class _SubjectIcon extends StatelessWidget {
-  const _SubjectIcon({required this.iconUrl});
+class SubjectIcon extends StatelessWidget {
+  const SubjectIcon({super.key, required this.iconUrl});
 
   final String iconUrl;
 
   @override
   Widget build(BuildContext context) {
-    if (iconUrl.isEmpty) {
-      return const Icon(
-        Icons.menu_book_outlined,
-        size: 40,
-        color: AppPalette.primaryBlue,
-      );
-    }
-
+    if (iconUrl.isEmpty) return _fallbackIcon();
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Image.network(
@@ -67,12 +64,16 @@ class _SubjectIcon extends StatelessWidget {
         width: 40,
         height: 40,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => const Icon(
-          Icons.menu_book_outlined,
-          size: 40,
-          color: AppPalette.primaryBlue,
-        ),
+        errorBuilder: (_, _, _) => _fallbackIcon(),
       ),
+    );
+  }
+
+  Widget _fallbackIcon() {
+    return const Icon(
+      Icons.menu_book_outlined,
+      size: 40,
+      color: AppPalette.primaryBlue,
     );
   }
 }

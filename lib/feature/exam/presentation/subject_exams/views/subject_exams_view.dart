@@ -21,10 +21,10 @@ class SubjectExamsView extends StatefulWidget {
   final SubjectEntity subject;
 
   @override
-  State<SubjectExamsView> createState() => _SubjectExamsViewState();
+  State<SubjectExamsView> createState() => SubjectExamsViewState();
 }
 
-class _SubjectExamsViewState extends State<SubjectExamsView> {
+class SubjectExamsViewState extends State<SubjectExamsView> {
   @override
   void initState() {
     super.initState();
@@ -40,66 +40,73 @@ class _SubjectExamsViewState extends State<SubjectExamsView> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              AppBackHeader(title: widget.subject.name),
-              const SizedBox(height: 20),
-              Expanded(
-                child: BlocConsumer<SubjectExamsCubit, SubjectExamsState>(
-                  listener: (context, state) {
-                    final error = state.examsState?.errorMessage ?? '';
-                    if (error.isNotEmpty) {
-                      buildSnackBar(
-                        context: context,
-                        message: error,
-                        backgroundColor: AppPalette.error,
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    final isLoading = state.examsState?.isLoading ?? false;
-                    final exams =
-                        state.examsState?.data ?? const <ExamEntity>[];
-
-                    if (isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (exams.isEmpty) {
-                      return Center(
-                        child: Text(
-                          AppStrings.noExamsFound,
-                          style: AppTextStyles.styleRegular16(
-                            color: AppPalette.grey,
-                          ),
-                        ),
-                      );
-                    }
-
-                    return ListView.separated(
-                      itemCount: exams.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        final exam = exams[index];
-                        return ExamListCard(
-                          exam: exam,
-                          onTap: () => _openInstructions(exam),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+          child: _body(),
         ),
       ),
     );
   }
 
-  void _openInstructions(ExamEntity exam) {
+  Widget _body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        AppBackHeader(title: widget.subject.name),
+        const SizedBox(height: 20),
+        Expanded(child: _examsConsumer()),
+      ],
+    );
+  }
+
+  Widget _examsConsumer() {
+    return BlocConsumer<SubjectExamsCubit, SubjectExamsState>(
+      listener: _onExamsState,
+      builder: (context, state) => _examsContent(state),
+    );
+  }
+
+  void _onExamsState(BuildContext context, SubjectExamsState state) {
+    final error = state.examsState?.errorMessage ?? '';
+    if (error.isEmpty) return;
+    buildSnackBar(
+      context: context,
+      message: error,
+      backgroundColor: AppPalette.error,
+    );
+  }
+
+  Widget _examsContent(SubjectExamsState state) {
+    final isLoading = state.examsState?.isLoading ?? false;
+    final exams = state.examsState?.data ?? const <ExamEntity>[];
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (exams.isEmpty) {
+      return Center(
+        child: Text(
+          AppStrings.noExamsFound,
+          style: AppTextStyles.styleRegular16(color: AppPalette.grey),
+        ),
+      );
+    }
+    return _examsList(exams);
+  }
+
+  Widget _examsList(List<ExamEntity> exams) {
+    return ListView.separated(
+      itemCount: exams.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final exam = exams[index];
+        return ExamListCard(
+          exam: exam,
+          onTap: () => openInstructions(exam),
+        );
+      },
+    );
+  }
+
+  void openInstructions(ExamEntity exam) {
     context.push(
       AppRoutes.examInstructions,
       extra: ExamSessionArgs(
