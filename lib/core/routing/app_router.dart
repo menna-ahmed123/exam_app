@@ -8,9 +8,11 @@ import 'package:exam_app/feature/auth/presentation/login/cubit/login_cubit.dart'
 import 'package:exam_app/feature/auth/presentation/login/views/login_view.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/cubit/sign_up_cubit.dart';
 import 'package:exam_app/feature/auth/presentation/sign_up/views/sign_up_view.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_history_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_score_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/subject_entity.dart';
+import 'package:exam_app/feature/exam/presentation/answers/views/exam_answers_view.dart';
 import 'package:exam_app/feature/exam/presentation/explore/cubit/explore_cubit.dart';
 import 'package:exam_app/feature/exam/presentation/explore/views/explore_view.dart';
 import 'package:exam_app/feature/exam/presentation/instructions/views/exam_instructions_view.dart';
@@ -146,6 +148,17 @@ class AppRouter {
               return const InvalidExtraRedirect();
             }
             return ExamScoreView(args: args);
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.examAnswers,
+          name: 'examAnswers',
+          builder: (context, state) {
+            final history = state.extra as ExamHistoryEntity?;
+            if (history == null) {
+              return const InvalidExtraRedirect();
+            }
+            return ExamAnswersView(history: history);
           },
         ),
         GoRoute(

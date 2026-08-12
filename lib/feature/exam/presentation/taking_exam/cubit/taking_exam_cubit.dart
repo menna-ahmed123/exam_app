@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
+import 'package:exam_app/feature/exam/domain/entities/answer_option_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/check_result_entity.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_answer_review_entity.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_history_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/question_entity.dart';
 import 'package:exam_app/feature/exam/domain/use_cases/check_questions_use_case.dart';
 import 'package:exam_app/feature/exam/domain/use_cases/get_questions_by_exam_use_case.dart';
+import 'package:exam_app/feature/exam/domain/use_cases/save_exam_history_use_case.dart';
+import 'package:exam_app/feature/exam/domain/utils/answer_review_evaluator.dart';
 import 'package:exam_app/feature/exam/presentation/taking_exam/cubit/taking_exam_event.dart';
 import 'package:exam_app/feature/exam/presentation/taking_exam/cubit/taking_exam_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,14 +22,17 @@ class TakingExamCubit extends Cubit<TakingExamState> {
   TakingExamCubit(
     this.getQuestionsByExamUseCase,
     this.checkQuestionsUseCase,
+    this.saveExamHistoryUseCase,
   ) : super(TakingExamState.initial(durationMinutes: 0));
 
   final GetQuestionsByExamUseCase getQuestionsByExamUseCase;
   final CheckQuestionsUseCase checkQuestionsUseCase;
+  final SaveExamHistoryUseCase saveExamHistoryUseCase;
 
   Timer? timer;
   DateTime? startedAt;
   ExamSessionArgs? session;
+  ExamHistoryEntity? lastSavedHistory;
 
   void onEvent(TakingExamEvent event) {
     switch (event) {
@@ -47,6 +55,7 @@ class TakingExamCubit extends Cubit<TakingExamState> {
 
   Future<void> start(ExamSessionArgs sessionArgs) async {
     session = sessionArgs;
+    lastSavedHistory = null;
     timer?.cancel();
     emit(TakingExamState.initial(durationMinutes: sessionArgs.durationMinutes));
     final response = await getQuestionsByExamUseCase(examId: sessionArgs.examId);
@@ -151,16 +160,33 @@ class TakingExamCubit extends Cubit<TakingExamState> {
       return;
     }
     emitSubmitting(fromTimeout);
+    await runSubmit(answers);
+  }
+
+  Future<void> runSubmit(List<Map<String, String>> answers) async {
+    final elapsed = elapsedMinutes();
     final response = await checkQuestionsUseCase(
       answers: answers,
-      time: elapsedMinutes(),
+      time: elapsed,
     );
     switch (response) {
       case SuccessResponse<CheckResultEntity>():
-        emitSubmitSuccess(response.data);
+        await onSubmitSuccess(response.data, elapsed);
       case ErrorResponse<CheckResultEntity>():
         emitSubmitError(response.errorMessage);
     }
+  }
+
+  Future<void> onSubmitSuccess(CheckResultEntity result, int elapsed) async {
+    final enriched = result.copyWith(
+      reviewQuestions: buildReviewQuestions(result),
+    );
+    try {
+      await persistHistory(result: enriched, timeTakenMinutes: elapsed);
+    } on Exception {
+      // Scoring succeeded; don't block score screen on local save failure.
+    }
+    emitSubmitSuccess(enriched);
   }
 
   List<Map<String, String>> buildAnswersPayload() {
@@ -221,6 +247,128 @@ class TakingExamCubit extends Cubit<TakingExamState> {
         ),
       ),
     );
+  }
+
+  List<ExamAnswerReviewEntity> buildReviewQuestions(CheckResultEntity result) {
+    final localQuestions =
+        state.questionsState?.data ?? const <QuestionEntity>[];
+    final correctIds = result.correctQuestionIds.toSet();
+    final apiById = {
+      for (final question in result.reviewQuestions)
+        question.questionId: question,
+    };
+    if (localQuestions.isEmpty) {
+      return reviewFromApiOnly(result);
+    }
+    return localQuestions
+        .map((question) => reviewFromLocal(question, apiById, correctIds))
+        .toList();
+  }
+
+  List<ExamAnswerReviewEntity> reviewFromApiOnly(CheckResultEntity result) {
+    return result.reviewQuestions.map((question) {
+      final selectedKeys =
+          state.selectedAnswers[question.questionId] ?? const <String>[];
+      return question.copyWith(selectedKeys: selectedKeys);
+    }).toList();
+  }
+
+  ExamAnswerReviewEntity reviewFromLocal(
+    QuestionEntity question,
+    Map<String, ExamAnswerReviewEntity> apiById,
+    Set<String> correctIds,
+  ) {
+    final selected = state.selectedAnswers[question.id] ?? const <String>[];
+    final apiQuestion = apiById[question.id];
+    final answers = localOrApiAnswers(question, apiQuestion);
+    final keys = correctKeysFor(
+      question: question,
+      apiQuestion: apiQuestion,
+      answers: answers,
+      selectedKeys: selected,
+      correctIds: correctIds,
+    );
+    return localReview(question, answers, selected, keys);
+  }
+
+  ExamAnswerReviewEntity localReview(
+    QuestionEntity question,
+    List<AnswerOptionEntity> answers,
+    List<String> selected,
+    List<String> keys,
+  ) {
+    return ExamAnswerReviewEntity(
+      questionId: question.id,
+      question: question.question,
+      answers: answers,
+      type: question.type,
+      selectedKeys: selected,
+      correctKeys: keys,
+    );
+  }
+
+  List<AnswerOptionEntity> localOrApiAnswers(
+    QuestionEntity question,
+    ExamAnswerReviewEntity? apiQuestion,
+  ) {
+    if (question.answers.isNotEmpty) return question.answers;
+    return apiQuestion?.answers ?? const [];
+  }
+
+  List<String> correctKeysFor({
+    required QuestionEntity question,
+    required ExamAnswerReviewEntity? apiQuestion,
+    required List<AnswerOptionEntity> answers,
+    required List<String> selectedKeys,
+    required Set<String> correctIds,
+  }) {
+    final rawCorrect = splitKeys(question.correctAnswer);
+    return AnswerReviewEvaluator.resolveCorrectKeys(
+      rawCorrectValues: rawCorrect.isNotEmpty
+          ? rawCorrect
+          : (apiQuestion?.correctKeys ?? const []),
+      answers: answers,
+      selectedKeys: selectedKeys,
+      isMarkedCorrect: correctIds.contains(question.id),
+    );
+  }
+
+  Future<void> persistHistory({
+    required CheckResultEntity result,
+    required int timeTakenMinutes,
+  }) async {
+    final examSession = session;
+    if (examSession == null) return;
+    final entry = historyEntry(examSession, result, timeTakenMinutes);
+    await saveExamHistoryUseCase(entry);
+    lastSavedHistory = entry;
+  }
+
+  ExamHistoryEntity historyEntry(ExamSessionArgs s, CheckResultEntity r, int mins) {
+    return ExamHistoryEntity(
+      id: '${DateTime.now().millisecondsSinceEpoch}',
+      subjectId: s.subjectId,
+      subjectName: s.subjectName,
+      examId: s.examId,
+      examTitle: s.examTitle,
+      numberOfQuestions: s.numberOfQuestions,
+      durationMinutes: s.durationMinutes,
+      timeTakenMinutes: mins,
+      correct: r.correct,
+      wrong: r.wrong,
+      percentage: r.percentage,
+      completedAt: DateTime.now(),
+      reviewQuestions: r.reviewQuestions,
+    );
+  }
+
+  List<String> splitKeys(String? value) {
+    if (value == null || value.trim().isEmpty) return const [];
+    return value
+        .split(',')
+        .map((key) => key.trim())
+        .where((key) => key.isNotEmpty)
+        .toList();
   }
 
   int elapsedMinutes() {

@@ -18,6 +18,9 @@ class AppPalette {
   // Status Colors
   static const Color error = Color.fromARGB(255, 204, 16, 16);
   static const Color timerGreen = Color.fromARGB(255, 11, 181, 24);
+  static const Color success = Color.fromARGB(255, 11, 181, 24);
+  static const Color correctBackground = Color.fromARGB(255, 214, 245, 214);
+  static const Color incorrectBackground = Color.fromARGB(255, 255, 214, 214);
 
   // Borders
   static const Color border = Color.fromARGB(31, 29, 25, 43);

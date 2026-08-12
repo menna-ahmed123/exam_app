@@ -6,6 +6,7 @@ import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/widgets/app_back_header.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/core/widgets/app_outlined_button.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_history_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_score_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:exam_app/feature/exam/presentation/score/widgets/score_ring.dart';
@@ -84,7 +85,7 @@ class ExamScoreView extends StatelessWidget {
     return [
       AppButton(
         text: AppStrings.showResults,
-        onPressed: () => context.go(AppRoutes.home),
+        onPressed: () => openAnswers(context),
       ),
       const SizedBox(height: 12),
       AppOutlinedButton(
@@ -92,6 +93,28 @@ class ExamScoreView extends StatelessWidget {
         onPressed: () => startAgain(context),
       ),
     ];
+  }
+
+  void openAnswers(BuildContext context) {
+    context.push(AppRoutes.examAnswers, extra: historyFromScore());
+  }
+
+  ExamHistoryEntity historyFromScore() {
+    return ExamHistoryEntity(
+      id: args.historyId,
+      subjectId: args.subjectId,
+      subjectName: args.subjectName,
+      examId: args.examId,
+      examTitle: args.examTitle,
+      numberOfQuestions: args.numberOfQuestions,
+      durationMinutes: args.durationMinutes,
+      timeTakenMinutes: args.timeTakenMinutes,
+      correct: args.correct,
+      wrong: args.wrong,
+      percentage: args.percentage,
+      completedAt: DateTime.now(),
+      reviewQuestions: args.reviewQuestions,
+    );
   }
 
   void startAgain(BuildContext context) {
