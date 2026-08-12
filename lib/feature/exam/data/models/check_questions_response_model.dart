@@ -1,4 +1,5 @@
 import 'package:exam_app/feature/exam/data/models/question_model.dart';
+import 'package:exam_app/feature/exam/domain/entities/answer_option_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/check_result_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_answer_review_entity.dart';
 import 'package:exam_app/feature/exam/domain/utils/answer_review_evaluator.dart';
@@ -9,15 +10,15 @@ part 'check_questions_response_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 class CheckQuestionsResponseModel {
   final String message;
-  @JsonKey(fromJson: _intFromJson)
+  @JsonKey(fromJson: intFromJson)
   final int correct;
-  @JsonKey(fromJson: _intFromJson)
+  @JsonKey(fromJson: intFromJson)
   final int wrong;
-  @JsonKey(fromJson: _percentageFromJson)
+  @JsonKey(fromJson: percentageFromJson)
   final double percentage;
-  @JsonKey(name: 'WrongQuestions', fromJson: _questionsFromJson)
+  @JsonKey(name: 'WrongQuestions', fromJson: questionsFromJson)
   final List<QuestionModel> wrongQuestions;
-  @JsonKey(name: 'correctQuestions', fromJson: _questionsFromJson)
+  @JsonKey(name: 'correctQuestions', fromJson: questionsFromJson)
   final List<QuestionModel> correctQuestions;
 
   CheckQuestionsResponseModel({
@@ -51,54 +52,16 @@ class CheckQuestionsResponseModel {
     final correctIds = <String>[];
     final wrongIds = <String>[];
     final reviewById = <String, ExamAnswerReviewEntity>{};
+    upsertAll(wrongQuestions, false, correctIds, wrongIds, reviewById);
+    upsertAll(correctQuestions, true, correctIds, wrongIds, reviewById);
+    return buildResult(correctIds, wrongIds, reviewById);
+  }
 
-    void upsert({
-      required QuestionModel question,
-      required bool isCorrectList,
-    }) {
-      if (question.id.isEmpty) return;
-
-      if (isCorrectList) {
-        if (!correctIds.contains(question.id)) correctIds.add(question.id);
-      } else {
-        if (!wrongIds.contains(question.id)) wrongIds.add(question.id);
-      }
-
-      final existing = reviewById[question.id];
-      final answers = question.answers.isNotEmpty
-          ? question.answers.map((answer) => answer.toDomain()).toList()
-          : (existing?.answers ?? const []);
-      final rawCorrect = _splitKeys(question.correct);
-      final correctKeys = AnswerReviewEvaluator.resolveCorrectKeys(
-        rawCorrectValues: rawCorrect.isNotEmpty
-            ? rawCorrect
-            : (existing?.correctKeys ?? const []),
-        answers: answers,
-        selectedKeys: const [],
-        isMarkedCorrect: false,
-      );
-
-      reviewById[question.id] = ExamAnswerReviewEntity(
-        questionId: question.id,
-        question: question.question.isNotEmpty
-            ? question.question
-            : (existing?.question ?? ''),
-        answers: answers,
-        type: question.type,
-        selectedKeys: const [],
-        correctKeys: correctKeys.isNotEmpty
-            ? correctKeys
-            : (existing?.correctKeys ?? const []),
-      );
-    }
-
-    for (final question in wrongQuestions) {
-      upsert(question: question, isCorrectList: false);
-    }
-    for (final question in correctQuestions) {
-      upsert(question: question, isCorrectList: true);
-    }
-
+  CheckResultEntity buildResult(
+    List<String> correctIds,
+    List<String> wrongIds,
+    Map<String, ExamAnswerReviewEntity> reviewById,
+  ) {
     return CheckResultEntity(
       correct: correct,
       wrong: wrong,
@@ -109,7 +72,103 @@ class CheckQuestionsResponseModel {
     );
   }
 
-  static List<String> _splitKeys(String? value) {
+  void upsertAll(
+    List<QuestionModel> questions,
+    bool isCorrectList,
+    List<String> correctIds,
+    List<String> wrongIds,
+    Map<String, ExamAnswerReviewEntity> reviewById,
+  ) {
+    for (final question in questions) {
+      upsertQuestion(
+        question: question,
+        isCorrectList: isCorrectList,
+        correctIds: correctIds,
+        wrongIds: wrongIds,
+        reviewById: reviewById,
+      );
+    }
+  }
+
+  void upsertQuestion({
+    required QuestionModel question,
+    required bool isCorrectList,
+    required List<String> correctIds,
+    required List<String> wrongIds,
+    required Map<String, ExamAnswerReviewEntity> reviewById,
+  }) {
+    if (question.id.isEmpty) return;
+    trackQuestionId(
+      questionId: question.id,
+      isCorrectList: isCorrectList,
+      correctIds: correctIds,
+      wrongIds: wrongIds,
+    );
+    reviewById[question.id] = buildReviewEntity(
+      question: question,
+      existing: reviewById[question.id],
+    );
+  }
+
+  void trackQuestionId({
+    required String questionId,
+    required bool isCorrectList,
+    required List<String> correctIds,
+    required List<String> wrongIds,
+  }) {
+    if (isCorrectList) {
+      if (!correctIds.contains(questionId)) correctIds.add(questionId);
+      return;
+    }
+    if (!wrongIds.contains(questionId)) wrongIds.add(questionId);
+  }
+
+  ExamAnswerReviewEntity buildReviewEntity({
+    required QuestionModel question,
+    required ExamAnswerReviewEntity? existing,
+  }) {
+    final answers = resolveAnswers(question, existing);
+    final correctKeys = resolveCorrectKeys(question, existing, answers);
+    return ExamAnswerReviewEntity(
+      questionId: question.id,
+      question: question.question.isNotEmpty
+          ? question.question
+          : (existing?.question ?? ''),
+      answers: answers,
+      type: question.type,
+      selectedKeys: const [],
+      correctKeys: correctKeys,
+    );
+  }
+
+  List<String> resolveCorrectKeys(
+    QuestionModel question,
+    ExamAnswerReviewEntity? existing,
+    List<AnswerOptionEntity> answers,
+  ) {
+    final rawCorrect = splitKeys(question.correct);
+    final keys = AnswerReviewEvaluator.resolveCorrectKeys(
+      rawCorrectValues:
+          rawCorrect.isNotEmpty ? rawCorrect : (existing?.correctKeys ?? const []),
+      answers: answers,
+      selectedKeys: const [],
+      isMarkedCorrect: false,
+    );
+    if (keys.isNotEmpty) return keys;
+    return existing?.correctKeys ?? const [];
+  }
+
+  List<AnswerOptionEntity> resolveAnswers(
+    QuestionModel question,
+    ExamAnswerReviewEntity? existing,
+  ) {
+    if (question.answers.isNotEmpty) {
+      return question.answers.map((answer) => answer.toDomain()).toList();
+    }
+    return existing?.answers ?? const [];
+  }
+
+  static List<String> splitKeys(String? value) {
     if (value == null || value.trim().isEmpty) return const [];
     return value
         .split(',')
@@ -118,7 +177,7 @@ class CheckQuestionsResponseModel {
         .toList();
   }
 
-  static int _intFromJson(dynamic value) {
+  static int intFromJson(dynamic value) {
     if (value == null) return 0;
     if (value is num) return value.toInt();
     if (value is String) {
@@ -127,7 +186,7 @@ class CheckQuestionsResponseModel {
     return 0;
   }
 
-  static double _percentageFromJson(dynamic value) {
+  static double percentageFromJson(dynamic value) {
     if (value == null) return 0;
     if (value is num) return value.toDouble();
     if (value is String) {
@@ -136,25 +195,27 @@ class CheckQuestionsResponseModel {
     return 0;
   }
 
-  static List<QuestionModel> _questionsFromJson(dynamic value) {
+  static List<QuestionModel> questionsFromJson(dynamic value) {
     if (value is! List) return const [];
     final questions = <QuestionModel>[];
     for (final item in value) {
-      if (item is String) {
-        final id = item.trim();
-        if (id.isEmpty) continue;
-        questions.add(
-          QuestionModel(id: id, question: '', answers: const []),
-        );
-        continue;
-      }
-      if (item is! Map) continue;
-      try {
-        questions.add(
-          QuestionModel.fromJson(Map<String, dynamic>.from(item)),
-        );
-      } catch (_) {}
+      final question = questionFromItem(item);
+      if (question != null) questions.add(question);
     }
     return questions;
+  }
+
+  static QuestionModel? questionFromItem(dynamic item) {
+    if (item is String) {
+      final id = item.trim();
+      if (id.isEmpty) return null;
+      return QuestionModel(id: id, question: '', answers: const []);
+    }
+    if (item is! Map) return null;
+    try {
+      return QuestionModel.fromJson(Map<String, dynamic>.from(item));
+    } catch (_) {
+      return null;
+    }
   }
 }

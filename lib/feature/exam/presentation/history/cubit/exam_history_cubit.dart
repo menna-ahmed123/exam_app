@@ -7,19 +7,29 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class ExamHistoryCubit extends Cubit<ExamHistoryState> {
-  ExamHistoryCubit(this._getExamHistoryUseCase)
+  ExamHistoryCubit(this.getExamHistoryUseCase)
       : super(ExamHistoryState.initial());
 
-  final GetExamHistoryUseCase _getExamHistoryUseCase;
+  final GetExamHistoryUseCase getExamHistoryUseCase;
 
   void onEvent(ExamHistoryEvent event) {
     switch (event) {
       case ExamHistoryLoad():
-        _load();
+        load();
     }
   }
 
-  Future<void> _load() async {
+  Future<void> load() async {
+    emitLoading();
+    try {
+      final history = await getExamHistoryUseCase();
+      emitSuccess(history);
+    } on Exception catch (error) {
+      emitError(error.toString());
+    }
+  }
+
+  void emitLoading() {
     emit(
       state.copyWith(
         historyState: state.historyState?.copyWith(
@@ -28,28 +38,29 @@ class ExamHistoryCubit extends Cubit<ExamHistoryState> {
         ),
       ),
     );
+  }
 
-    try {
-      final history = await _getExamHistoryUseCase();
-      emit(
-        state.copyWith(
-          historyState: state.historyState?.copyWith(
-            isLoading: false,
-            data: history,
-            errorMessage: '',
-          ),
+  void emitSuccess(List<ExamHistoryEntity> history) {
+    emit(
+      state.copyWith(
+        historyState: state.historyState?.copyWith(
+          isLoading: false,
+          data: history,
+          errorMessage: '',
         ),
-      );
-    } on Exception catch (error) {
-      emit(
-        state.copyWith(
-          historyState: state.historyState?.copyWith(
-            isLoading: false,
-            errorMessage: error.toString(),
-          ),
+      ),
+    );
+  }
+
+  void emitError(String message) {
+    emit(
+      state.copyWith(
+        historyState: state.historyState?.copyWith(
+          isLoading: false,
+          errorMessage: message,
         ),
-      );
-    }
+      ),
+    );
   }
 
   Map<String, List<ExamHistoryEntity>> get groupedBySubject {

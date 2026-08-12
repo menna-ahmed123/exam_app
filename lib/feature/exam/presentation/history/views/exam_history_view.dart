@@ -16,10 +16,10 @@ class ExamHistoryView extends StatefulWidget {
   const ExamHistoryView({super.key});
 
   @override
-  State<ExamHistoryView> createState() => _ExamHistoryViewState();
+  State<ExamHistoryView> createState() => ExamHistoryViewState();
 }
 
-class _ExamHistoryViewState extends State<ExamHistoryView> {
+class ExamHistoryViewState extends State<ExamHistoryView> {
   @override
   void initState() {
     super.initState();
@@ -29,91 +29,93 @@ class _ExamHistoryViewState extends State<ExamHistoryView> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ExamHistoryCubit, ExamHistoryState>(
-      listener: (context, state) {
-        final error = state.historyState?.errorMessage ?? '';
-        if (error.isNotEmpty) {
-          buildSnackBar(
-            context: context,
-            message: error,
-            backgroundColor: AppPalette.error,
-          );
-        }
-      },
-      builder: (context, state) {
-        final isLoading = state.historyState?.isLoading ?? false;
-        final grouped = context.read<ExamHistoryCubit>().groupedBySubject;
+      listener: onHistoryState,
+      builder: (context, state) => historyBody(context, state),
+    );
+  }
 
-        if (isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  void onHistoryState(BuildContext context, ExamHistoryState state) {
+    final error = state.historyState?.errorMessage ?? '';
+    if (error.isEmpty) return;
+    buildSnackBar(
+      context: context,
+      message: error,
+      backgroundColor: AppPalette.error,
+    );
+  }
 
-        if (grouped.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Text(
-                  AppStrings.results,
-                  style: AppTextStyles.styleSemiBold24(),
-                ),
-                const Spacer(),
-                Center(
-                  child: Text(
-                    AppStrings.noExamHistory,
-                    style: AppTextStyles.styleRegular16(color: AppPalette.grey),
-                  ),
-                ),
-                const Spacer(),
-              ],
+  Widget historyBody(BuildContext context, ExamHistoryState state) {
+    final isLoading = state.historyState?.isLoading ?? false;
+    final grouped = context.read<ExamHistoryCubit>().groupedBySubject;
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (grouped.isEmpty) return emptyHistory();
+    return historyList(grouped);
+  }
+
+  Widget emptyHistory() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Text(AppStrings.results, style: AppTextStyles.styleSemiBold24()),
+          const Spacer(),
+          Center(
+            child: Text(
+              AppStrings.noExamHistory,
+              style: AppTextStyles.styleRegular16(color: AppPalette.grey),
             ),
-          );
-        }
+          ),
+          const Spacer(),
+        ],
+      ),
+    );
+  }
 
-        final subjectNames = grouped.keys.toList();
-
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: subjectNames.length,
-          itemBuilder: (context, index) {
-            final subjectName = subjectNames[index];
-            final entries = grouped[subjectName] ?? const <ExamHistoryEntity>[];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (index == 0) ...[
-                  Text(
-                    AppStrings.results,
-                    style: AppTextStyles.styleSemiBold24(),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                Text(
-                  subjectName,
-                  style: AppTextStyles.styleMedium18(),
-                ),
-                const SizedBox(height: 12),
-                ...entries.map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ExamHistoryCard(
-                      entry: entry,
-                      onTap: () {
-                        context.push(
-                          AppRoutes.examAnswers,
-                          extra: entry,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-              ],
-            );
-          },
-        );
+  Widget historyList(Map<String, List<ExamHistoryEntity>> grouped) {
+    final subjectNames = grouped.keys.toList();
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: subjectNames.length,
+      itemBuilder: (context, index) {
+        final subjectName = subjectNames[index];
+        final entries = grouped[subjectName] ?? const <ExamHistoryEntity>[];
+        return subjectSection(context, subjectName, entries, index == 0);
       },
+    );
+  }
+
+  Widget subjectSection(
+    BuildContext context,
+    String subjectName,
+    List<ExamHistoryEntity> entries,
+    bool isFirst,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (isFirst) ...[
+          Text(AppStrings.results, style: AppTextStyles.styleSemiBold24()),
+          const SizedBox(height: 16),
+        ],
+        Text(subjectName, style: AppTextStyles.styleMedium18()),
+        const SizedBox(height: 12),
+        ...entries.map((entry) => historyCard(context, entry)),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget historyCard(BuildContext context, ExamHistoryEntity entry) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: ExamHistoryCard(
+        entry: entry,
+        onTap: () => context.push(AppRoutes.examAnswers, extra: entry),
+      ),
     );
   }
 }

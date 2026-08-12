@@ -96,23 +96,24 @@ class ExamScoreView extends StatelessWidget {
   }
 
   void openAnswers(BuildContext context) {
-    context.push(
-      AppRoutes.examAnswers,
-      extra: ExamHistoryEntity(
-        id: args.historyId,
-        subjectId: args.subjectId,
-        subjectName: args.subjectName,
-        examId: args.examId,
-        examTitle: args.examTitle,
-        numberOfQuestions: args.numberOfQuestions,
-        durationMinutes: args.durationMinutes,
-        timeTakenMinutes: args.timeTakenMinutes,
-        correct: args.correct,
-        wrong: args.wrong,
-        percentage: args.percentage,
-        completedAt: DateTime.now(),
-        reviewQuestions: args.reviewQuestions,
-      ),
+    context.push(AppRoutes.examAnswers, extra: historyFromScore());
+  }
+
+  ExamHistoryEntity historyFromScore() {
+    return ExamHistoryEntity(
+      id: args.historyId,
+      subjectId: args.subjectId,
+      subjectName: args.subjectName,
+      examId: args.examId,
+      examTitle: args.examTitle,
+      numberOfQuestions: args.numberOfQuestions,
+      durationMinutes: args.durationMinutes,
+      timeTakenMinutes: args.timeTakenMinutes,
+      correct: args.correct,
+      wrong: args.wrong,
+      percentage: args.percentage,
+      completedAt: DateTime.now(),
+      reviewQuestions: args.reviewQuestions,
     );
   }
 

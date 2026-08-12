@@ -9,13 +9,13 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ExamHistoryLocalDataSource)
 class ExamHistoryLocalDataSourceImpl implements ExamHistoryLocalDataSource {
-  ExamHistoryLocalDataSourceImpl(this._secureStorageService);
+  ExamHistoryLocalDataSourceImpl(this.secureStorageService);
 
-  final SecureStorageService _secureStorageService;
+  final SecureStorageService secureStorageService;
 
   @override
   Future<List<ExamHistoryEntity>> getHistory() async {
-    final models = await _readModels();
+    final models = await readModels();
     final entities = models.map((model) => model.toDomain()).toList()
       ..sort((a, b) => b.completedAt.compareTo(a.completedAt));
     return entities;
@@ -31,41 +31,32 @@ class ExamHistoryLocalDataSourceImpl implements ExamHistoryLocalDataSource {
 
   @override
   Future<void> saveHistoryEntry(ExamHistoryEntity entry) async {
-    final models = await _readModels();
+    final models = await readModels();
     models.insert(0, ExamHistoryModel.fromDomain(entry));
-    await _writeModels(models);
+    await writeModels(models);
   }
 
-  Future<List<ExamHistoryModel>> _readModels() async {
-    final raw = await _secureStorageService.read(
-      key: StorageKeys.examHistory,
-    );
-    if (raw == null || raw.isEmpty) {
-      return [];
-    }
+  Future<List<ExamHistoryModel>> readModels() async {
+    final raw = await secureStorageService.read(key: StorageKeys.examHistory);
+    if (raw == null || raw.isEmpty) return [];
     try {
-      final decoded = jsonDecode(raw);
-      if (decoded is! List) {
-        return [];
-      }
-      return decoded
-          .whereType<Map>()
-          .map(
-            (item) => ExamHistoryModel.fromJson(
-              Map<String, dynamic>.from(item),
-            ),
-          )
-          .toList();
+      return parseModels(jsonDecode(raw));
     } on FormatException {
       return [];
     }
   }
 
-  Future<void> _writeModels(List<ExamHistoryModel> models) {
-    final payload = jsonEncode(
-      models.map((model) => model.toJson()).toList(),
-    );
-    return _secureStorageService.write(
+  List<ExamHistoryModel> parseModels(dynamic decoded) {
+    if (decoded is! List) return [];
+    return decoded
+        .whereType<Map>()
+        .map((item) => ExamHistoryModel.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  }
+
+  Future<void> writeModels(List<ExamHistoryModel> models) {
+    final payload = jsonEncode(models.map((model) => model.toJson()).toList());
+    return secureStorageService.write(
       key: StorageKeys.examHistory,
       value: payload,
     );

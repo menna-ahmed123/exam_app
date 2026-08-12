@@ -15,59 +15,63 @@ class ExamAnswersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final questions = history.reviewQuestions;
-
     return Scaffold(
       backgroundColor: AppPalette.scaffoldGrey,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.screenHorizontal,
-                8,
-                AppSpacing.screenHorizontal,
-                0,
-              ),
-              child: AppBackHeader(title: AppStrings.answers),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: questions.isEmpty
-                  ? Center(
-                      child: Text(
-                        AppStrings.noExamHistory,
-                        style: AppTextStyles.styleRegular16(
-                          color: AppPalette.grey,
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.screenHorizontal,
-                        vertical: 8,
-                      ),
-                      itemCount: questions.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 16),
-                      itemBuilder: (context, index) {
-                        return _AnswerReviewCard(question: questions[index]);
-                      },
-                    ),
-            ),
-          ],
+      body: SafeArea(child: answersBody()),
+    );
+  }
+
+  Widget answersBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.screenHorizontal,
+            8,
+            AppSpacing.screenHorizontal,
+            0,
+          ),
+          child: AppBackHeader(title: AppStrings.answers),
         ),
+        const SizedBox(height: 16),
+        Expanded(child: answersContent()),
+      ],
+    );
+  }
+
+  Widget answersContent() {
+    final questions = history.reviewQuestions;
+    if (questions.isEmpty) return emptyAnswers();
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenHorizontal,
+        vertical: 8,
+      ),
+      itemCount: questions.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        return AnswerReviewCard(question: questions[index]);
+      },
+    );
+  }
+
+  Widget emptyAnswers() {
+    return Center(
+      child: Text(
+        AppStrings.noExamHistory,
+        style: AppTextStyles.styleRegular16(color: AppPalette.grey),
       ),
     );
   }
 }
 
-class _AnswerReviewCard extends StatelessWidget {
-  const _AnswerReviewCard({required this.question});
+class AnswerReviewCard extends StatelessWidget {
+  const AnswerReviewCard({super.key, required this.question});
 
   final ExamAnswerReviewEntity question;
 
-  bool get _isMultiple => question.type.toLowerCase().contains('multiple');
+  bool get isMultiple => question.type.toLowerCase().contains('multiple');
 
   @override
   Widget build(BuildContext context) {
@@ -81,41 +85,44 @@ class _AnswerReviewCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              question.question,
-              style: AppTextStyles.styleMedium16(),
-            ),
+            Text(question.question, style: AppTextStyles.styleMedium16()),
             const SizedBox(height: 12),
-            ...question.answers.map((option) {
-              final state = AnswerReviewEvaluator.stateForOption(
-                optionKey: option.key,
-                selectedKeys: question.selectedKeys,
-                correctKeys: question.correctKeys,
-              );
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _AnswerReviewOption(
-                  text: option.answer,
-                  isMultiple: _isMultiple,
-                  isSelected: question.selectedKeys.any(
-                    (key) =>
-                        key.trim().toLowerCase() ==
-                        option.key.trim().toLowerCase(),
-                  ),
-                  state: state,
-                ),
-              );
-            }),
+            ...optionWidgets(),
           ],
         ),
       ),
     );
   }
+
+  List<Widget> optionWidgets() {
+    return question.answers.map((option) {
+      final state = AnswerReviewEvaluator.stateForOption(
+        optionKey: option.key,
+        selectedKeys: question.selectedKeys,
+        correctKeys: question.correctKeys,
+      );
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: AnswerReviewOption(
+          text: option.answer,
+          isMultiple: isMultiple,
+          isSelected: isOptionSelected(option.key),
+          state: state,
+        ),
+      );
+    }).toList();
+  }
+
+  bool isOptionSelected(String optionKey) {
+    return question.selectedKeys.any(
+      (key) => key.trim().toLowerCase() == optionKey.trim().toLowerCase(),
+    );
+  }
 }
 
-class _AnswerReviewOption extends StatelessWidget {
-  const _AnswerReviewOption({
+class AnswerReviewOption extends StatelessWidget {
+  const AnswerReviewOption({
+    super.key,
     required this.text,
     required this.isMultiple,
     required this.isSelected,
@@ -129,59 +136,67 @@ class _AnswerReviewOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = switch (state) {
-      AnswerOptionReviewState.correct => AppPalette.correctBackground,
-      AnswerOptionReviewState.incorrect => AppPalette.incorrectBackground,
-      AnswerOptionReviewState.neutral => AppPalette.optionBackground,
-    };
-    final borderColor = switch (state) {
-      AnswerOptionReviewState.correct => AppPalette.success,
-      AnswerOptionReviewState.incorrect => AppPalette.error,
-      AnswerOptionReviewState.neutral => AppPalette.transparent,
-    };
-    final iconColor = switch (state) {
-      AnswerOptionReviewState.correct => AppPalette.success,
-      AnswerOptionReviewState.incorrect => AppPalette.error,
-      AnswerOptionReviewState.neutral => AppPalette.primaryBlue,
-    };
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: borderColor),
-      ),
+      decoration: optionDecoration(),
       child: Row(
         children: [
-          Icon(
-            _iconFor(state),
-            color: iconColor,
-            size: 22,
-          ),
+          Icon(iconFor(state), color: iconColor(), size: 22),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTextStyles.styleRegular16(),
-            ),
-          ),
+          Expanded(child: Text(text, style: AppTextStyles.styleRegular16())),
         ],
       ),
     );
   }
 
-  IconData _iconFor(AnswerOptionReviewState state) {
-    if (isMultiple) {
-      return switch (state) {
-        AnswerOptionReviewState.correct =>
-          isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-        AnswerOptionReviewState.incorrect => Icons.check_box,
-        AnswerOptionReviewState.neutral => Icons.check_box_outline_blank,
-      };
-    }
+  BoxDecoration optionDecoration() {
+    return BoxDecoration(
+      color: backgroundColor(),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: borderColor()),
+    );
+  }
 
+  Color backgroundColor() {
+    return switch (state) {
+      AnswerOptionReviewState.correct => AppPalette.correctBackground,
+      AnswerOptionReviewState.incorrect => AppPalette.incorrectBackground,
+      AnswerOptionReviewState.neutral => AppPalette.optionBackground,
+    };
+  }
+
+  Color borderColor() {
+    return switch (state) {
+      AnswerOptionReviewState.correct => AppPalette.success,
+      AnswerOptionReviewState.incorrect => AppPalette.error,
+      AnswerOptionReviewState.neutral => AppPalette.transparent,
+    };
+  }
+
+  Color iconColor() {
+    return switch (state) {
+      AnswerOptionReviewState.correct => AppPalette.success,
+      AnswerOptionReviewState.incorrect => AppPalette.error,
+      AnswerOptionReviewState.neutral => AppPalette.primaryBlue,
+    };
+  }
+
+  IconData iconFor(AnswerOptionReviewState state) {
+    if (isMultiple) return multipleIcon(state);
+    return singleIcon(state);
+  }
+
+  IconData multipleIcon(AnswerOptionReviewState state) {
+    return switch (state) {
+      AnswerOptionReviewState.correct =>
+        isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+      AnswerOptionReviewState.incorrect => Icons.check_box,
+      AnswerOptionReviewState.neutral => Icons.check_box_outline_blank,
+    };
+  }
+
+  IconData singleIcon(AnswerOptionReviewState state) {
     return switch (state) {
       AnswerOptionReviewState.correct =>
         isSelected ? Icons.radio_button_checked : Icons.radio_button_off,

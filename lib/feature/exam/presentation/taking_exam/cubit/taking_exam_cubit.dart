@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:exam_app/config/base_response/base_response.dart';
 import 'package:exam_app/core/constants/app_strings.dart';
+import 'package:exam_app/feature/exam/domain/entities/answer_option_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/check_result_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_answer_review_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_history_entity.dart';
@@ -159,6 +160,10 @@ class TakingExamCubit extends Cubit<TakingExamState> {
       return;
     }
     emitSubmitting(fromTimeout);
+    await runSubmit(answers);
+  }
+
+  Future<void> runSubmit(List<Map<String, String>> answers) async {
     final elapsed = elapsedMinutes();
     final response = await checkQuestionsUseCase(
       answers: answers,
@@ -273,27 +278,58 @@ class TakingExamCubit extends Cubit<TakingExamState> {
     Map<String, ExamAnswerReviewEntity> apiById,
     Set<String> correctIds,
   ) {
-    final selectedKeys = state.selectedAnswers[question.id] ?? const <String>[];
+    final selected = state.selectedAnswers[question.id] ?? const <String>[];
     final apiQuestion = apiById[question.id];
-    final answers = question.answers.isNotEmpty
-        ? question.answers
-        : (apiQuestion?.answers ?? const []);
+    final answers = localOrApiAnswers(question, apiQuestion);
+    final keys = correctKeysFor(
+      question: question,
+      apiQuestion: apiQuestion,
+      answers: answers,
+      selectedKeys: selected,
+      correctIds: correctIds,
+    );
+    return localReview(question, answers, selected, keys);
+  }
+
+  ExamAnswerReviewEntity localReview(
+    QuestionEntity question,
+    List<AnswerOptionEntity> answers,
+    List<String> selected,
+    List<String> keys,
+  ) {
+    return ExamAnswerReviewEntity(
+      questionId: question.id,
+      question: question.question,
+      answers: answers,
+      type: question.type,
+      selectedKeys: selected,
+      correctKeys: keys,
+    );
+  }
+
+  List<AnswerOptionEntity> localOrApiAnswers(
+    QuestionEntity question,
+    ExamAnswerReviewEntity? apiQuestion,
+  ) {
+    if (question.answers.isNotEmpty) return question.answers;
+    return apiQuestion?.answers ?? const [];
+  }
+
+  List<String> correctKeysFor({
+    required QuestionEntity question,
+    required ExamAnswerReviewEntity? apiQuestion,
+    required List<AnswerOptionEntity> answers,
+    required List<String> selectedKeys,
+    required Set<String> correctIds,
+  }) {
     final rawCorrect = splitKeys(question.correctAnswer);
-    final correctKeys = AnswerReviewEvaluator.resolveCorrectKeys(
+    return AnswerReviewEvaluator.resolveCorrectKeys(
       rawCorrectValues: rawCorrect.isNotEmpty
           ? rawCorrect
           : (apiQuestion?.correctKeys ?? const []),
       answers: answers,
       selectedKeys: selectedKeys,
       isMarkedCorrect: correctIds.contains(question.id),
-    );
-    return ExamAnswerReviewEntity(
-      questionId: question.id,
-      question: question.question,
-      answers: answers,
-      type: question.type,
-      selectedKeys: selectedKeys,
-      correctKeys: correctKeys,
     );
   }
 
@@ -303,23 +339,27 @@ class TakingExamCubit extends Cubit<TakingExamState> {
   }) async {
     final examSession = session;
     if (examSession == null) return;
-    final entry = ExamHistoryEntity(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      subjectId: examSession.subjectId,
-      subjectName: examSession.subjectName,
-      examId: examSession.examId,
-      examTitle: examSession.examTitle,
-      numberOfQuestions: examSession.numberOfQuestions,
-      durationMinutes: examSession.durationMinutes,
-      timeTakenMinutes: timeTakenMinutes,
-      correct: result.correct,
-      wrong: result.wrong,
-      percentage: result.percentage,
-      completedAt: DateTime.now(),
-      reviewQuestions: result.reviewQuestions,
-    );
+    final entry = historyEntry(examSession, result, timeTakenMinutes);
     await saveExamHistoryUseCase(entry);
     lastSavedHistory = entry;
+  }
+
+  ExamHistoryEntity historyEntry(ExamSessionArgs s, CheckResultEntity r, int mins) {
+    return ExamHistoryEntity(
+      id: '${DateTime.now().millisecondsSinceEpoch}',
+      subjectId: s.subjectId,
+      subjectName: s.subjectName,
+      examId: s.examId,
+      examTitle: s.examTitle,
+      numberOfQuestions: s.numberOfQuestions,
+      durationMinutes: s.durationMinutes,
+      timeTakenMinutes: mins,
+      correct: r.correct,
+      wrong: r.wrong,
+      percentage: r.percentage,
+      completedAt: DateTime.now(),
+      reviewQuestions: r.reviewQuestions,
+    );
   }
 
   List<String> splitKeys(String? value) {

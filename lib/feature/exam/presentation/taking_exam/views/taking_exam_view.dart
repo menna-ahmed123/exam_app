@@ -6,6 +6,8 @@ import 'package:exam_app/core/routing/app_routes.dart';
 import 'package:exam_app/core/utils/build_snack_bar.dart';
 import 'package:exam_app/core/widgets/app_button.dart';
 import 'package:exam_app/core/widgets/app_outlined_button.dart';
+import 'package:exam_app/feature/exam/domain/entities/check_result_entity.dart';
+import 'package:exam_app/feature/exam/domain/entities/exam_history_entity.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_score_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/exam_session_args.dart';
 import 'package:exam_app/feature/exam/domain/entities/question_entity.dart';
@@ -188,20 +190,27 @@ class TakingExamViewState extends State<TakingExamView> {
     final history = context.read<TakingExamCubit>().lastSavedHistory;
     context.pushReplacement(
       AppRoutes.examScore,
-      extra: ExamScoreArgs(
-        examId: widget.args.examId,
-        examTitle: widget.args.examTitle,
-        subjectId: widget.args.subjectId,
-        subjectName: widget.args.subjectName,
-        durationMinutes: widget.args.durationMinutes,
-        numberOfQuestions: widget.args.numberOfQuestions,
-        correct: result.correct,
-        wrong: result.wrong,
-        percentage: result.percentage,
-        historyId: history?.id ?? '',
-        timeTakenMinutes: history?.timeTakenMinutes ?? 1,
-        reviewQuestions: result.reviewQuestions,
-      ),
+      extra: scoreArgs(result, history),
+    );
+  }
+
+  ExamScoreArgs scoreArgs(
+    CheckResultEntity result,
+    ExamHistoryEntity? history,
+  ) {
+    return ExamScoreArgs(
+      examId: widget.args.examId,
+      examTitle: widget.args.examTitle,
+      subjectId: widget.args.subjectId,
+      subjectName: widget.args.subjectName,
+      durationMinutes: widget.args.durationMinutes,
+      numberOfQuestions: widget.args.numberOfQuestions,
+      correct: result.correct,
+      wrong: result.wrong,
+      percentage: result.percentage,
+      historyId: history?.id ?? '',
+      timeTakenMinutes: history?.timeTakenMinutes ?? 1,
+      reviewQuestions: result.reviewQuestions,
     );
   }
 }
