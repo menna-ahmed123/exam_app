@@ -17,12 +17,14 @@ class AppPalette {
 
   // Status Colors
   static const Color error = Color.fromARGB(255, 204, 16, 16);
+  static const Color timerGreen = Color.fromARGB(255, 11, 181, 24);
 
   // Borders
   static const Color border = Color.fromARGB(31, 29, 25, 43);
   static const Color inputBorder = Color.fromARGB(255, 29, 25, 43);
 
   static const Color lightBlue = Color.fromARGB(255, 223, 231, 247);
+  static const Color optionBackground = Color.fromARGB(255, 237, 240, 245);
   static const Color scaffoldGrey = Color.fromARGB(255, 249, 249, 249);
 
   // Button
